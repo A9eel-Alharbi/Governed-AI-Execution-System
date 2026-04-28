@@ -1,0 +1,22 @@
+spec_version: "2.0.0"
+session_id: "session-000"
+work_package_id: "WP-000"
+owner: "agent-operator"
+last_validated: "2026-01-01"
+vault_health:
+  overall: "pass"
+  checked_from: "aos/health/vault-health.yaml"
+constraints_to_load:
+  - document: "constraints/schema.md"
+    sections:
+      - "tables.subscriptions"
+    permission: "READ-ONLY"
+  - document: "constraints/api/openapi.yaml"
+    sections:
+      - "paths./v1/subscriptions.post"
+    permission: "PROPOSE"
+previous_session_summary: "No prior session."
+blockers_from_previous_session: []
+done_criteria_reference:
+  document: "work-packages/WP-000.md"
+  section: "6. Done Criteria"

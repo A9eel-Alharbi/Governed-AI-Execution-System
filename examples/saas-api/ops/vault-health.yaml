@@ -1,0 +1,58 @@
+spec_version: "2.0.0"
+generated_at: "2026-04-28T08:00:00Z"
+overall_status: "green"
+documents:
+  - id: "vision-saas-core"
+    path: "examples/saas-api/constraints/vision.md"
+    owner: "Product Lead"
+    last_validated: "2026-04-28"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 5
+    open_conflicts: 0
+  - id: "schema-saas-core"
+    path: "examples/saas-api/constraints/schema.md"
+    owner: "Backend Lead"
+    last_validated: "2026-04-28"
+    validation_method: "automated"
+    staleness_flag: "green"
+    wp_reference_count: 4
+    open_conflicts: 0
+  - id: "api-saas-core"
+    path: "examples/saas-api/constraints/openapi.yaml"
+    owner: "API Lead"
+    last_validated: "2026-04-28"
+    validation_method: "automated"
+    staleness_flag: "green"
+    wp_reference_count: 3
+    open_conflicts: 0
+  - id: "api-saas-companion"
+    path: "examples/saas-api/constraints/api-contract.md"
+    owner: "API Lead"
+    last_validated: "2026-04-28"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 2
+    open_conflicts: 0
+  - id: "security-saas-core"
+    path: "examples/saas-api/constraints/security-rules.md"
+    owner: "Security Lead"
+    last_validated: "2026-04-28"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 4
+    open_conflicts: 0
+  - id: "testing-saas-core"
+    path: "examples/saas-api/constraints/testing-strategy.md"
+    owner: "Engineering Lead"
+    last_validated: "2026-04-28"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+open_constraint_conflicts: []
+ccrs_in_flight: []
+cross_document_checks:
+  - check: "schema-to-api naming translation"
+    status: "pass"
+    summary: "snake_case database columns intentionally map to camelCase API fields via documented translation rule"

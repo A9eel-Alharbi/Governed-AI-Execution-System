@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 OpenAPI x-aos Extension",
+  "type": "object",
+  "required": ["owner", "lastValidated", "stabilityClass"],
+  "properties": {
+    "owner": { "type": "string" },
+    "lastValidated": { "type": "string", "format": "date" },
+    "stabilityClass": { "enum": ["high", "low", "mixed"] },
+    "rateLimit": { "type": "string" },
+    "changeClassification": {
+      "type": "object",
+      "properties": {
+        "requestBody": { "enum": ["breaking", "non-breaking"] },
+        "responseBody": { "enum": ["breaking", "non-breaking"] },
+        "newOptionalField": { "enum": ["breaking", "non-breaking"] }
+      }
+    },
+    "fieldRules": {
+      "type": "object",
+      "properties": {
+        "readOnly": { "type": "array", "items": { "type": "string" } },
+        "writeOnce": { "type": "array", "items": { "type": "string" } },
+        "nullable": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "additionalProperties": false
+}

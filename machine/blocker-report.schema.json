@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 Agent Blocker Report",
+  "type": "object",
+  "required": ["spec_version", "blocker_report"],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "blocker_report": {
+      "type": "object",
+      "required": [
+        "wp_id",
+        "constraint_document",
+        "section",
+        "problem_type",
+        "problematic_quote",
+        "why_it_blocks_execution",
+        "needs_from_human"
+      ],
+      "properties": {
+        "wp_id": { "type": "string" },
+        "constraint_document": { "type": "string" },
+        "section": { "type": "string" },
+        "problem_type": { "enum": ["ambiguous", "contradictory", "missing", "outdated"] },
+        "problematic_quote": { "type": "string" },
+        "why_it_blocks_execution": { "type": "string" },
+        "needs_from_human": { "type": "string" },
+        "proposed_resolution": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

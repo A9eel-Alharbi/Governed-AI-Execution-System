@@ -1,0 +1,10 @@
+spec_version: "2.0.0"
+blocker_report:
+  wp_id: "WP-000"
+  constraint_document: "constraints/openapi.yaml"
+  section: "paths./v1/example.post"
+  problem_type: "ambiguous"
+  problematic_quote: "status may vary based on business policy"
+  why_it_blocks_execution: "Response contract is not deterministic enough to implement safely."
+  needs_from_human: "Choose one default returned status."
+  proposed_resolution: "Document one default status and move alternate behavior to a follow-up WP."

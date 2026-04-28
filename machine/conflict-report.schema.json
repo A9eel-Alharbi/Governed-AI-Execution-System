@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 Constraint Conflict Report",
+  "type": "object",
+  "required": ["spec_version", "constraint_conflict_report"],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "constraint_conflict_report": {
+      "type": "object",
+      "required": [
+        "wp_id",
+        "document_a",
+        "document_b",
+        "contradiction_type",
+        "agent_precedence_assessment",
+        "recommended_resolution"
+      ],
+      "properties": {
+        "wp_id": { "type": "string" },
+        "document_a": {
+          "type": "object",
+          "required": ["name", "section", "quote"],
+          "properties": {
+            "name": { "type": "string" },
+            "section": { "type": "string" },
+            "quote": { "type": "string" }
+          }
+        },
+        "document_b": {
+          "type": "object",
+          "required": ["name", "section", "quote"],
+          "properties": {
+            "name": { "type": "string" },
+            "section": { "type": "string" },
+            "quote": { "type": "string" }
+          }
+        },
+        "contradiction_type": { "type": "string" },
+        "agent_precedence_assessment": {
+          "type": "object",
+          "required": ["recommended_precedence", "reasoning"],
+          "properties": {
+            "recommended_precedence": { "type": "string" },
+            "reasoning": { "type": "string" }
+          }
+        },
+        "recommended_resolution": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 Impact Assessment",
+  "type": "object",
+  "required": ["spec_version", "impact_assessment"],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "impact_assessment": {
+      "type": "object",
+      "required": [
+        "ccr_id",
+        "constraint_changed",
+        "change_class",
+        "affected_wps",
+        "assessment_owner",
+        "approved_by",
+        "approved_at"
+      ],
+      "properties": {
+        "ccr_id": { "type": "string" },
+        "constraint_changed": {
+          "type": "object",
+          "required": ["document", "section"],
+          "properties": {
+            "document": { "type": "string" },
+            "section": { "type": "string" }
+          }
+        },
+        "change_class": { "enum": ["Class 1", "Class 2", "Class 3"] },
+        "affected_wps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["wp_id", "current_state", "recommended_action", "estimated_rework_cost_hours"],
+            "properties": {
+              "wp_id": { "type": "string" },
+              "current_state": { "type": "string" },
+              "recommended_action": { "type": "string" },
+              "estimated_rework_cost_hours": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "assessment_owner": { "type": "string" },
+        "approved_by": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "approved_at": { "type": "string", "format": "date" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

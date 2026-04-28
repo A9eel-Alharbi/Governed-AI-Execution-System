@@ -1,0 +1,16 @@
+spec_version: "2.0.0"
+impact_assessment:
+  ccr_id: "CCR-000"
+  constraint_changed:
+    document: "constraints/schema.md"
+    section: "tables.subscriptions.plan_code"
+  change_class: "Class 2"
+  affected_wps:
+    - wp_id: "WP-001"
+      current_state: "ready"
+      recommended_action: "revalidate before execution"
+      estimated_rework_cost_hours: 1
+  assessment_owner: "[required: owner]"
+  approved_by:
+    - "[required: approver]"
+  approved_at: "2026-01-01"

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 Constraint Change Request",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "ccr_id",
+    "date",
+    "author",
+    "owner",
+    "last_validated",
+    "constraint_document",
+    "section_affected",
+    "nature_of_change",
+    "change_class",
+    "summary",
+    "reason",
+    "in_flight_wps",
+    "impact_classification",
+    "migration_plan",
+    "approval_status",
+    "approvals",
+    "date_constraint_document_updated"
+  ],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "ccr_id": { "type": "string" },
+    "date": { "type": "string", "format": "date" },
+    "author": { "type": "string" },
+    "owner": { "type": "string" },
+    "last_validated": { "type": "string", "format": "date" },
+    "constraint_document": { "type": "string" },
+    "section_affected": { "type": "string" },
+    "nature_of_change": { "enum": ["additive", "modifying", "breaking"] },
+    "change_class": { "enum": ["Class 1", "Class 2", "Class 3"] },
+    "summary": { "type": "string" },
+    "reason": { "type": "string" },
+    "in_flight_wps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["wp_id", "current_status", "impact"],
+        "properties": {
+          "wp_id": { "type": "string" },
+          "current_status": { "type": "string" },
+          "impact": { "type": "string" }
+        }
+      }
+    },
+    "impact_classification": {
+      "enum": ["no WPs affected", "some WPs affected", "all WPs must restart"]
+    },
+    "migration_plan": { "type": "array", "items": { "type": "string" } },
+    "approval_status": { "enum": ["draft", "under-review", "approved", "rejected", "implemented", "rolled-back"] },
+    "approvals": {
+      "type": "object",
+      "required": ["required", "received"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "received": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "date_constraint_document_updated": { "type": "string", "format": "date" },
+    "change_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "author", "change"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "author": { "type": "string" },
+          "change": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

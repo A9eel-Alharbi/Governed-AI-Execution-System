@@ -1,0 +1,38 @@
+spec_version: "2.0.0"
+session_id: "session-WP-002-02"
+wp_id: "WP-002"
+status: "blocked"
+files_created: []
+files_modified:
+  - path: "services/api/routes/subscriptions.py"
+    reason: "Partial implementation existed before CCR-001 invalidated the field mapping"
+tests_written:
+  - name: "test_create_subscription_success"
+    type: "integration"
+    verifies: "Pre-CCR create behavior using planCode"
+constraints_consulted:
+  - document: "examples/saas-api/constraints/schema.md"
+    sections:
+      - "Table: subscriptions"
+  - document: "examples/saas-api/ops/CCR-001-plan-code-rename.yaml"
+    sections:
+      - "summary"
+      - "migration_plan"
+constraint_conflicts:
+  - type: "breaking change"
+    summary: "CCR-001 invalidated plan_code-based in-flight implementation"
+    resolution: "WP blocked pending revised session loader and replacement contract"
+done_criteria_status:
+  - criterion: "contract conformance"
+    status: "fail"
+    evidence: "OpenAPI and approved CCR are no longer aligned for this in-flight execution"
+  - criterion: "schema conformance"
+    status: "fail"
+    evidence: "Current code path still assumes plan_code"
+  - criterion: "test coverage"
+    status: "pass"
+    evidence: "Pre-change tests exist but no longer prove the revised requirement"
+blockers:
+  - type: "approved-breaking-constraint-change"
+    summary: "CCR-001 superseded current field assumption"
+    needs_from_human: "Issue a revised WP/session pair aligned to plan_key"

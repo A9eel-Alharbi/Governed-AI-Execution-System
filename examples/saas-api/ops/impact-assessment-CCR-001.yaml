@@ -1,0 +1,21 @@
+spec_version: "2.0.0"
+impact_assessment:
+  ccr_id: "CCR-001"
+  constraint_changed:
+    document: "examples/saas-api/constraints/schema.md"
+    section: "subscriptions.plan_code"
+  change_class: "Class 3"
+  affected_wps:
+    - wp_id: "WP-002"
+      current_state: "in-progress"
+      recommended_action: "stop and replace with revised CRUD endpoint WP referencing plan_key"
+      estimated_rework_cost_hours: 5
+    - wp_id: "WP-005"
+      current_state: "ready"
+      recommended_action: "update provider sync mapping before execution"
+      estimated_rework_cost_hours: 2
+  assessment_owner: "Backend Lead"
+  approved_by:
+    - "Engineering Lead"
+    - "API Lead"
+  approved_at: "2026-04-28"

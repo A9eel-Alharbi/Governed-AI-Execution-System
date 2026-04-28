@@ -1,0 +1,16 @@
+spec_version: "2.0.0"
+constraint_conflict_report:
+  wp_id: "WP-000"
+  document_a:
+    name: "constraints/schema.md"
+    section: "subscriptions table"
+    quote: "plan_code is the canonical identifier"
+  document_b:
+    name: "constraints/openapi.yaml"
+    section: "components.schemas.Subscription"
+    quote: "planId"
+  contradiction_type: "field naming mismatch"
+  agent_precedence_assessment:
+    recommended_precedence: "schema.md"
+    reasoning: "Schema is high-stability and contract appears stale."
+  recommended_resolution: "Raise CCR and align contract with schema or document intentional translation."

@@ -1,0 +1,30 @@
+name: aos-validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate-artifacts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: aos-cdd-v2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validator dependencies
+        run: python -m pip install pyyaml
+      - name: Validate machine-readable artifacts
+        run: python tools/aos_validate.py validate
+      - name: Generate vault health report
+        run: python tools/aos_validate.py health-report
+      - name: Upload health report
+        uses: actions/upload-artifact@v4
+        with:
+          name: vault-health-report
+          path: aos-cdd-v2/reports/vault-health-report.json

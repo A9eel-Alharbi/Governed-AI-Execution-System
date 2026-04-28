@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 Vault Health Dashboard",
+  "type": "object",
+  "required": ["spec_version", "generated_at", "overall_status", "documents", "open_constraint_conflicts", "ccrs_in_flight"],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "overall_status": { "enum": ["green", "yellow", "red"] },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "path",
+          "owner",
+          "last_validated",
+          "validation_method",
+          "staleness_flag",
+          "wp_reference_count",
+          "open_conflicts"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "owner": { "type": "string" },
+          "last_validated": { "type": "string", "format": "date" },
+          "validation_method": { "enum": ["automated", "manual", "not validated"] },
+          "staleness_flag": { "enum": ["green", "yellow", "red"] },
+          "wp_reference_count": { "type": "integer", "minimum": 0 },
+          "open_conflicts": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "open_constraint_conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["document_id", "summary", "severity"],
+        "properties": {
+          "document_id": { "type": "string" },
+          "summary": { "type": "string" },
+          "severity": { "enum": ["yellow", "red"] }
+        }
+      }
+    },
+    "ccrs_in_flight": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ccr_id", "status", "constraint_document"],
+        "properties": {
+          "ccr_id": { "type": "string" },
+          "status": { "type": "string" },
+          "constraint_document": { "type": "string" }
+        }
+      }
+    },
+    "cross_document_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["check", "status", "summary"],
+        "properties": {
+          "check": { "type": "string" },
+          "status": { "enum": ["pass", "warn", "fail"] },
+          "summary": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,40 @@
+spec_version: "2.0.0"
+generated_at: "2026-04-28T12:00:00Z"
+overall_status: "red"
+documents:
+  - id: "vision-saas-core"
+    path: "examples/saas-api/constraints/vision.md"
+    owner: "Product Lead"
+    last_validated: "2026-04-28"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 5
+    open_conflicts: 0
+  - id: "schema-saas-core"
+    path: "examples/saas-api/constraints/schema.md"
+    owner: "Backend Lead"
+    last_validated: "2026-04-28"
+    validation_method: "automated"
+    staleness_flag: "red"
+    wp_reference_count: 4
+    open_conflicts: 1
+  - id: "api-saas-core"
+    path: "examples/saas-api/constraints/openapi.yaml"
+    owner: "API Lead"
+    last_validated: "2026-04-28"
+    validation_method: "automated"
+    staleness_flag: "red"
+    wp_reference_count: 3
+    open_conflicts: 1
+open_constraint_conflicts:
+  - document_id: "schema-saas-core"
+    summary: "Approved CCR-001 renamed plan_code to plan_key; in-flight WP-002 still targets old field"
+    severity: "red"
+ccrs_in_flight:
+  - ccr_id: "CCR-001"
+    status: "approved"
+    constraint_document: "examples/saas-api/constraints/schema.md"
+cross_document_checks:
+  - check: "schema-to-api alignment"
+    status: "fail"
+    summary: "Schema rename approved but OpenAPI and in-flight WP execution still reference pre-CCR naming"

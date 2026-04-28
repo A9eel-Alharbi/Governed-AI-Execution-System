@@ -1,0 +1,10 @@
+spec_version: "2.0.0"
+blocker_report:
+  wp_id: "WP-002"
+  constraint_document: "examples/saas-api/constraints/schema.md"
+  section: "subscriptions.plan_code"
+  problem_type: "outdated"
+  problematic_quote: "plan_code is the canonical plan identifier"
+  why_it_blocks_execution: "Approved CCR-001 replaces plan_code with plan_key, so the current WP no longer matches the source of truth."
+  needs_from_human: "Re-scope WP-002 or provide a revised session loader tied to the post-CCR contract."
+  proposed_resolution: "Block current execution and issue a replacement WP and session loader aligned to plan_key."

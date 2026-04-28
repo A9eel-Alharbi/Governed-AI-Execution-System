@@ -1,0 +1,16 @@
+spec_version: "2.0.0"
+constraint_conflict_report:
+  wp_id: "WP-002"
+  document_a:
+    name: "examples/saas-api/constraints/schema.md"
+    section: "subscriptions table"
+    quote: "plan_code is the canonical plan identifier"
+  document_b:
+    name: "examples/saas-api/ops/CCR-001-plan-code-rename.yaml"
+    section: "summary"
+    quote: "Rename subscriptions.plan_code to plan_key"
+  contradiction_type: "approved breaking rename conflicts with in-flight WP assumptions"
+  agent_precedence_assessment:
+    recommended_precedence: "CCR-001-plan-code-rename.yaml"
+    reasoning: "The CCR is approved and therefore supersedes the previous field name for new execution."
+  recommended_resolution: "Stop WP-002 and regenerate its session loader and API contract references against plan_key."

@@ -1,0 +1,30 @@
+spec_version: "2.0.0"
+owner: "Tooling Owner"
+last_validated: "2026-04-28"
+commands:
+  - command: "/wp WP-001"
+    maps_to: "work-package execution"
+    target: "examples/saas-api/work-packages/WP-001-add-subscriptions-schema.md"
+    preconditions:
+      - "WP status is ready"
+      - "All hard dependencies are done"
+      - "Referenced constraints are green"
+    expected_agent_behavior:
+      - "Load session loader and referenced constraints"
+      - "Stop on blocker before implementation"
+      - "Emit completion report before marking done"
+    expected_output_format: "completion-report.yaml and concise human summary"
+    human_review_gate: true
+  - command: "/review WP-002"
+    maps_to: "review action"
+    target: "examples/saas-api/work-packages/WP-002-create-subscription-endpoint.md"
+    preconditions:
+      - "Completion report exists"
+    expected_agent_behavior:
+      - "Review scope, tests, and contract conformance"
+    expected_output_format: "review report"
+    human_review_gate: false
+change_log:
+  - date: "2026-04-28"
+    author: "OpenAI Codex"
+    change: "Initial example"

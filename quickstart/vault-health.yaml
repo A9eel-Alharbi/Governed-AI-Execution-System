@@ -1,0 +1,15 @@
+spec_version: "2.0.0"
+generated_at: "2026-01-01T00:00:00Z"
+overall_status: "green"
+documents:
+  - id: "vision-tier1"
+    path: "quickstart/vision.md"
+    owner: "[owner]"
+    last_validated: "2026-01-01"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 0
+    open_conflicts: 0
+open_constraint_conflicts: []
+ccrs_in_flight: []
+cross_document_checks: []

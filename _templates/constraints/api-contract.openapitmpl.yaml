@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info:
+  title: "[required: service name] API"
+  version: "0.1.0"
+  summary: "[required: bounded context summary]"
+  description: >
+    [required: concise description of the API surface covered by this contract.
+    Prose-only API specs are forbidden. This OpenAPI file is the machine-readable source of truth.]
+servers:
+  - url: https://api.example.com
+    description: production
+tags:
+  - name: subscriptions
+    description: Example resource tag
+paths:
+  /v1/subscriptions:
+    post:
+      tags: [subscriptions]
+      summary: Create subscription
+      description: >
+        [required: one-sentence behavior summary]
+      operationId: createSubscription
+      security:
+        - bearerAuth: []
+      x-aos:
+        owner: "[required: API owner]"
+        lastValidated: "YYYY-MM-DD"
+        stabilityClass: "low"
+        rateLimit: "60 requests/minute per tenant"
+        changeClassification:
+          requestBody: "breaking"
+          responseBody: "breaking"
+          newOptionalField: "non-breaking"
+        fieldRules:
+          readOnly:
+            - id
+            - createdAt
+          writeOnce:
+            - tenantId
+          nullable:
+            - cancelAt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubscriptionRequest"
+            examples:
+              default:
+                value:
+                  tenantId: "4d8b8e34-22fb-4aa4-a942-c6a76219df9d"
+                  planCode: "pro-monthly"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+              examples:
+                default:
+                  value:
+                    id: "f2c8847d-f23f-43cc-b393-2dc650d6085f"
+                    tenantId: "4d8b8e34-22fb-4aa4-a942-c6a76219df9d"
+                    planCode: "pro-monthly"
+                    status: "active"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          $ref: "#/components/responses/Conflict"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CreateSubscriptionRequest:
+      type: object
+      required: [tenantId, planCode]
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        planCode:
+          type: string
+        cancelAt:
+          type: string
+          format: date-time
+          nullable: true
+    Subscription:
+      type: object
+      required: [id, tenantId, planCode, status, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenantId:
+          type: string
+          format: uuid
+        planCode:
+          type: string
+        status:
+          type: string
+          enum: [trialing, active, past_due, canceled]
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+  responses:
+    BadRequest:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Conflict:
+      description: State conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true

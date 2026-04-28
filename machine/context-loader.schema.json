@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 Session Loader",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "session_id",
+    "work_package_id",
+    "owner",
+    "last_validated",
+    "vault_health",
+    "constraints_to_load",
+    "done_criteria_reference"
+  ],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "session_id": { "type": "string" },
+    "work_package_id": { "type": "string" },
+    "owner": { "type": "string" },
+    "last_validated": { "type": "string", "format": "date" },
+    "vault_health": {
+      "type": "object",
+      "required": ["overall", "checked_from"],
+      "properties": {
+        "overall": { "enum": ["pass", "fail"] },
+        "checked_from": { "type": "string" }
+      }
+    },
+    "constraints_to_load": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["document", "sections", "permission"],
+        "properties": {
+          "document": { "type": "string" },
+          "sections": { "type": "array", "items": { "type": "string" } },
+          "permission": {
+            "enum": ["READ-ONLY", "ADVISORY", "PROPOSE", "IMPLEMENT WITH REVIEW"]
+          }
+        }
+      }
+    },
+    "previous_session_summary": { "type": "string" },
+    "blockers_from_previous_session": { "type": "array" },
+    "done_criteria_reference": {
+      "type": "object",
+      "required": ["document", "section"],
+      "properties": {
+        "document": { "type": "string" },
+        "section": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

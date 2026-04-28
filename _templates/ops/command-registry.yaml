@@ -1,0 +1,31 @@
+spec_version: "2.0.0"
+owner: "[required: tooling owner]"
+last_validated: "2026-01-01"
+commands:
+  - command: "/wp WP-001"
+    maps_to: "work-package execution"
+    target: "work-packages/WP-001.md"
+    preconditions:
+      - "WP status is ready"
+      - "All hard dependencies are done"
+      - "Referenced constraints are not red in vault health"
+    expected_agent_behavior:
+      - "Load session artifact"
+      - "Load current WP and referenced constraints"
+      - "Stop on blocker before implementation"
+      - "Emit completion report before marking done"
+    expected_output_format: "completion-report.yaml plus human-readable summary"
+    human_review_gate: true
+  - command: "/review WP-001"
+    maps_to: "review action"
+    target: "work-packages/WP-001.md"
+    preconditions:
+      - "Completion report exists"
+    expected_agent_behavior:
+      - "Review changed files against scope and done criteria"
+    expected_output_format: "review report"
+    human_review_gate: false
+change_log:
+  - date: "2026-01-01"
+    author: "[name]"
+    change: "Initial draft"

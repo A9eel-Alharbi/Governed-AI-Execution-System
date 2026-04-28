@@ -1,0 +1,347 @@
+openapi: 3.1.0
+info:
+  title: SaaS Usage and Subscription API
+  version: 1.0.0
+  summary: Multi-tenant API for subscriptions and usage reporting
+  description: Machine-readable source of truth for the representative public API surface.
+servers:
+  - url: https://api.example-saas.com
+    description: production
+tags:
+  - name: auth
+  - name: subscriptions
+  - name: usage
+paths:
+  /v1/auth/login:
+    post:
+      tags: [auth]
+      summary: Exchange credentials for an access token
+      operationId: login
+      security: []
+      x-aos:
+        owner: API Lead
+        lastValidated: 2026-04-28
+        stabilityClass: high
+        rateLimit: 10 requests/minute per IP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/subscriptions:
+    post:
+      tags: [subscriptions]
+      summary: Create a tenant subscription
+      operationId: createSubscription
+      security:
+        - bearerAuth: []
+      x-aos:
+        owner: API Lead
+        lastValidated: 2026-04-28
+        stabilityClass: low
+        rateLimit: 60 requests/minute per tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /v1/subscriptions/{subscriptionId}:
+    get:
+      tags: [subscriptions]
+      summary: Retrieve one subscription
+      operationId: getSubscription
+      security:
+        - bearerAuth: []
+      x-aos:
+        owner: API Lead
+        lastValidated: 2026-04-28
+        stabilityClass: low
+        rateLimit: 300 requests/minute per tenant
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+      responses:
+        '200':
+          description: Subscription found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/usage/events:
+    post:
+      tags: [usage]
+      summary: Ingest one tenant usage event
+      operationId: createUsageEvent
+      security:
+        - bearerAuth: []
+      x-aos:
+        owner: API Lead
+        lastValidated: 2026-04-28
+        stabilityClass: low
+        rateLimit: 300 requests/minute per tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUsageEventRequest'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageEventAccepted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /v1/usage/reports/daily:
+    get:
+      tags: [usage]
+      summary: Retrieve a daily usage report for a tenant
+      operationId: getDailyUsageReport
+      security:
+        - bearerAuth: []
+      x-aos:
+        owner: API Lead
+        lastValidated: 2026-04-28
+        stabilityClass: low
+        rateLimit: 120 requests/minute per tenant
+      parameters:
+        - name: tenantId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: reportDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Daily usage report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageReport'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    SubscriptionId:
+      name: subscriptionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+    AuthTokenResponse:
+      type: object
+      required: [accessToken, refreshToken, expiresIn]
+      properties:
+        accessToken:
+          type: string
+          readOnly: true
+        refreshToken:
+          type: string
+          readOnly: true
+        expiresIn:
+          type: integer
+          readOnly: true
+    CreateSubscriptionRequest:
+      type: object
+      required: [tenantId, planCode, billingProvider]
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+          writeOnly: true
+        planCode:
+          type: string
+        billingProvider:
+          type: string
+          enum: [stripe]
+        cancelAt:
+          type: string
+          format: date-time
+          nullable: true
+    Subscription:
+      type: object
+      required: [id, tenantId, planCode, status, billingProvider, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        tenantId:
+          type: string
+          format: uuid
+          readOnly: true
+        planCode:
+          type: string
+        status:
+          type: string
+          enum: [trialing, active, past_due, canceled]
+        billingProvider:
+          type: string
+        providerSubscriptionId:
+          type: string
+          nullable: true
+          readOnly: true
+        cancelAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    CreateUsageEventRequest:
+      type: object
+      required: [tenantId, eventType, eventTimestamp, quantity]
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+        eventTimestamp:
+          type: string
+          format: date-time
+        quantity:
+          type: integer
+          minimum: 1
+        externalEventId:
+          type: string
+          nullable: true
+    UsageEventAccepted:
+      type: object
+      required: [accepted, idempotencyKey]
+      properties:
+        accepted:
+          type: boolean
+        idempotencyKey:
+          type: string
+          nullable: true
+    UsageReport:
+      type: object
+      required: [tenantId, reportDate, totalEvents, totalQuantity, generatedAt]
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        reportDate:
+          type: string
+          format: date
+        totalEvents:
+          type: integer
+        totalQuantity:
+          type: integer
+        generatedAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+  responses:
+    BadRequest:
+      description: Validation failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Authentication failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Authorization failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: State conflict or idempotency conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

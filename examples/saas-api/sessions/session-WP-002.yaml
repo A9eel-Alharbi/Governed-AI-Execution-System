@@ -1,0 +1,35 @@
+spec_version: "2.0.0"
+session_id: "session-WP-002-01"
+work_package_id: "WP-002"
+owner: "agent-operator"
+last_validated: "2026-04-28"
+vault_health:
+  overall: "pass"
+  checked_from: "examples/saas-api/ops/vault-health.yaml"
+constraints_to_load:
+  - document: "examples/saas-api/constraints/schema.md"
+    sections:
+      - "Table: subscriptions"
+      - "Protected Fields and Prohibited Agent Actions"
+    permission: "READ-ONLY"
+  - document: "examples/saas-api/constraints/openapi.yaml"
+    sections:
+      - "paths./v1/subscriptions"
+      - "paths./v1/subscriptions/{subscriptionId}"
+      - "components.schemas.Subscription"
+    permission: "READ-ONLY"
+  - document: "examples/saas-api/constraints/vision.md"
+    sections:
+      - "In Scope"
+      - "Non-Functional Requirements"
+    permission: "ADVISORY"
+  - document: "examples/saas-api/constraints/security-rules.md"
+    sections:
+      - "Authorization Model"
+      - "Forbidden Patterns"
+    permission: "READ-ONLY"
+previous_session_summary: "WP-001 completed and schema is available."
+blockers_from_previous_session: []
+done_criteria_reference:
+  document: "examples/saas-api/work-packages/WP-002-create-subscription-endpoint.md"
+  section: "6. Done Criteria"

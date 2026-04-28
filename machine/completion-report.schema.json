@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AOS/CDD v2 Work Package Completion Report",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "session_id",
+    "wp_id",
+    "status",
+    "files_created",
+    "files_modified",
+    "tests_written",
+    "constraints_consulted",
+    "constraint_conflicts",
+    "done_criteria_status",
+    "blockers"
+  ],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "session_id": { "type": "string" },
+    "wp_id": { "type": "string" },
+    "status": { "enum": ["complete", "partial", "blocked"] },
+    "files_created": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "purpose"],
+        "properties": {
+          "path": { "type": "string" },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "files_modified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "reason"],
+        "properties": {
+          "path": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "tests_written": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "verifies"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "verifies": { "type": "string" }
+        }
+      }
+    },
+    "constraints_consulted": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["document", "sections"],
+        "properties": {
+          "document": { "type": "string" },
+          "sections": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "constraint_conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "summary"],
+        "properties": {
+          "type": { "type": "string" },
+          "summary": { "type": "string" },
+          "resolution": { "type": "string" }
+        }
+      }
+    },
+    "done_criteria_status": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "status", "evidence"],
+        "properties": {
+          "criterion": { "type": "string" },
+          "status": { "enum": ["pass", "fail", "not applicable"] },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "summary", "needs_from_human"],
+        "properties": {
+          "type": { "type": "string" },
+          "summary": { "type": "string" },
+          "needs_from_human": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

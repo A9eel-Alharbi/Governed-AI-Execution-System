@@ -1,0 +1,31 @@
+spec_version: "2.0.0"
+ccr_id: "CCR-000"
+date: "2026-01-01"
+author: "[required: author]"
+owner: "[required: approving owner]"
+last_validated: "2026-01-01"
+constraint_document: "constraints/schema.md"
+section_affected: "tables.subscriptions.plan_code"
+nature_of_change: "additive"
+change_class: "Class 1"
+summary: "Add enterprise plan metadata."
+reason: "Support annual enterprise pricing without introducing a new table."
+in_flight_wps:
+  - wp_id: "WP-012"
+    current_status: "in-progress"
+    impact: "review"
+impact_classification: "some WPs affected"
+migration_plan:
+  - "Review WP-012 for contract references to plan_code."
+  - "No restart required if only optional fields are added."
+approval_status: "draft"
+approvals:
+  required:
+    - "domain-owner"
+    - "engineering-lead"
+  received: []
+date_constraint_document_updated: "2026-01-01"
+change_log:
+  - date: "2026-01-01"
+    author: "[name]"
+    change: "Initial draft"
