@@ -2,6 +2,9 @@
 
 AOS/CDD v2 is a repository-native framework for AI-assisted software delivery.
 
+`AOS` stands for `Agent Operating System`.
+`CDD` stands for `Constraint-Driven Development`.
+
 It exists to solve a specific engineering problem: AI coding sessions are fast, but they drift. Models forget context, invent unstated assumptions, change more than requested, and leave weak audit trails. AOS/CDD v2 turns that into a governed execution model with explicit constraints, bounded work packages, machine-readable session context, health checks, and completion evidence.
 
 ## Choose Your Starting Point
