@@ -4,6 +4,17 @@ AOS/CDD v2 is a repository-native framework for AI-assisted software delivery.
 
 It exists to solve a specific engineering problem: AI coding sessions are fast, but they drift. Models forget context, invent unstated assumptions, change more than requested, and leave weak audit trails. AOS/CDD v2 turns that into a governed execution model with explicit constraints, bounded work packages, machine-readable session context, health checks, and completion evidence.
 
+## Choose Your Starting Point
+
+- `Tier 1: Constraint Core`
+  Use this if you are solo, early-stage, testing the framework, or want the lowest-friction path. Start in [quickstart/README.md](./quickstart/README.md).
+- `Tier 2: Full Execution Discipline`
+  Use this if you want bounded AI execution with work packages, session loaders, done criteria, and completion reports. Start in [spec/03-tiered-adoption.md](./spec/03-tiered-adoption.md) and [_templates/](./_templates/).
+- `Tier 3: Integrated Operations`
+  Use this only after Tier 2 is already working in a real repo and you want CI/CD, validator-driven enforcement, and workflow integration. Start in [spec/09-tooling-integration.md](./spec/09-tooling-integration.md).
+
+If you are unsure, start with `Tier 1`.
+
 ## What This Is
 
 This repository is not an application and not a runtime SDK.
