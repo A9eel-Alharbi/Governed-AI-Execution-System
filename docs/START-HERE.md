@@ -245,3 +245,38 @@ The validator checks the machine-readable artifacts it knows about and emits `re
 It does not replace product management, engineering judgment, or architecture decision-making. It governs execution against explicit constraints; it does not invent good constraints by itself.
 
 Read [spec/15-boundaries.md](../spec/15-boundaries.md) before broad adoption.
+
+## personal notes
+What i personaly do when i first clone this repo is run this prompt in the agent chat:
+This repository is using AOS/CDD (Agent Operating System / Constraint-Driven Development).
+
+  For this project, do not start by writing application code.
+
+  Your first job is to help me define the project using the framework already present in this repository.
+
+  Work in this order:
+  1. quickstart/vision.md
+  2. quickstart/schema.md
+  3. quickstart/api-contract.md
+  4. quickstart/security-rules.md
+  5. quickstart/vault-health.yaml
+
+  For now, we are in artifact-definition mode, not implementation mode.
+
+  Do not invent extra features.
+  Do not write production code yet.
+  Keep the scope minimal and explicit.
+  When drafting, help me define only what is necessary for the first version of the project.
+  After the quickstart files are defined, we will create the first Work Package and session loader.
+
+  ## Why this matters
+
+  Without this, the agent may:
+
+  - start coding immediately
+  - skip constraints
+  - add features you did not ask for
+  - ignore the framework structure you just cloned
+
+  So yes, the first step is basically:
+  teach the agent how this repo is supposed to be used.
