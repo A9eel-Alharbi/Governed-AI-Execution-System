@@ -38,6 +38,14 @@ ARTIFACT_SCHEMAS = {
         "_templates/ops/command-registry.yaml",
         "examples/*/ops/command-registry.yaml",
     ],
+    "policy-profile.schema.json": [
+        "_templates/ops/policy-profile.yaml",
+        "examples/*/ops/policy-profile.yaml",
+    ],
+    "approval-record.schema.json": [
+        "_templates/ops/approval-record.yaml",
+        "examples/*/ops/APR-*.yaml",
+    ],
     "ccr.schema.json": [
         "_templates/work-packages/constraint-change-request.yaml",
         "examples/*/ops/CCR-*.yaml",
@@ -237,6 +245,60 @@ def compare_session_to_wp(root: Path, session_path: Path, session_data: dict[str
     return errors
 
 
+def compare_session_policy_profile(root: Path, session_path: Path, session_data: dict[str, Any]) -> list[ValidationErrorDetail]:
+    if "_templates" in session_path.parts:
+        return []
+    policy_profile = session_data.get("policy_profile")
+    if not isinstance(policy_profile, dict):
+        return [ValidationErrorDetail("$.policy_profile", "Session loader missing policy_profile object")]
+
+    document = policy_profile.get("document")
+    if not isinstance(document, str) or not document:
+        return [ValidationErrorDetail("$.policy_profile.document", "Session loader policy_profile.document must be a non-empty string")]
+
+    policy_path = root / document
+    errors: list[ValidationErrorDetail] = []
+    if not policy_path.exists():
+        errors.append(
+            ValidationErrorDetail(
+                "$.policy_profile.document",
+                f"Referenced policy profile does not exist: {document!r}",
+            )
+        )
+
+    vault_health = session_data.get("vault_health")
+    checked_from = vault_health.get("checked_from") if isinstance(vault_health, dict) else None
+    if not isinstance(checked_from, str) or not checked_from:
+        errors.append(
+            ValidationErrorDetail(
+                "$.vault_health.checked_from",
+                "Session loader must declare vault_health.checked_from for policy-profile enforcement",
+            )
+        )
+        return errors
+
+    vault_path = root / checked_from
+    if not vault_path.exists():
+        errors.append(
+            ValidationErrorDetail(
+                "$.vault_health.checked_from",
+                f"Referenced vault health file does not exist: {checked_from!r}",
+            )
+        )
+        return errors
+
+    vault_data = load_text_data(vault_path)
+    documents = vault_data.get("documents", []) if isinstance(vault_data, dict) else []
+    if not any(isinstance(item, dict) and item.get("path") == document for item in documents):
+        errors.append(
+            ValidationErrorDetail(
+                "$.policy_profile.document",
+                f"Policy profile {document!r} is not tracked in {checked_from!r}",
+            )
+        )
+    return errors
+
+
 def classify_document(path_text: str, document_id: str) -> tuple[int, int]:
     key = f"{document_id} {path_text}".lower()
     if "schema" in key or "openapi" in key or "api" in key:
@@ -310,6 +372,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
         errors = validate_against_schema(data, schema)
         if schema_path.name == "context-loader.schema.json" and isinstance(data, dict):
             errors.extend(compare_session_to_wp(args.root, file_path, data))
+            errors.extend(compare_session_policy_profile(args.root, file_path, data))
         if errors:
             errors_found = True
             print(f"[FAIL] {file_path.relative_to(args.root)} against {schema_path.name}")

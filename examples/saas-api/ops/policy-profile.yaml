@@ -1,0 +1,20 @@
+spec_version: "2.0.0"
+owner: "Policy Admin"
+last_validated: "2026-04-28"
+defaults:
+  environment: "staging"
+  approval_state: "approved"
+  target_class: "general"
+  destructive_action: false
+case_overrides:
+  "implementation.run_wp":
+    environment: "staging"
+    approval_state: "approved"
+    target_class: "general"
+  "change.constraint_conflict":
+    environment: "prod"
+    approval_state: "approved"
+    target_class: "production"
+notes:
+  - "SaaS API work-package execution defaults to approved staging governance."
+  - "Constraint conflicts are treated as production-affecting governance events."

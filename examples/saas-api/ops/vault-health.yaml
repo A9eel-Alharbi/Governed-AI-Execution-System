@@ -42,6 +42,22 @@ documents:
     staleness_flag: "green"
     wp_reference_count: 4
     open_conflicts: 0
+  - id: "policy-saas-core"
+    path: "examples/saas-api/ops/policy-profile.yaml"
+    owner: "Policy Admin"
+    last_validated: "2026-04-28"
+    validation_method: "automated"
+    staleness_flag: "green"
+    wp_reference_count: 2
+    open_conflicts: 0
+  - id: "threat-model-saas-core"
+    path: "examples/saas-api/ops/security-threat-model.md"
+    owner: "Security Lead"
+    last_validated: "2026-04-28"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 2
+    open_conflicts: 0
   - id: "testing-saas-core"
     path: "examples/saas-api/constraints/testing-strategy.md"
     owner: "Engineering Lead"
@@ -56,3 +72,9 @@ cross_document_checks:
   - check: "schema-to-api naming translation"
     status: "pass"
     summary: "snake_case database columns intentionally map to camelCase API fields via documented translation rule"
+  - check: "session policy anchoring"
+    status: "pass"
+    summary: "WP-002 session loaders reference the governed policy profile tracked in vault health"
+  - check: "security threat model alignment"
+    status: "pass"
+    summary: "security rules, policy profile, and CCR-sensitive execution paths align with the documented SaaS threat model"

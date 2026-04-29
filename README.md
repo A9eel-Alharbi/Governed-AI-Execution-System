@@ -81,6 +81,98 @@ python tools\aos_validate.py health-report
 
 The validator checks machine-readable artifacts against the repository schemas and emits a `reports/vault-health-report.json` file.
 
+## Agent Control Stack
+
+This repository now also contains a production-oriented example implementation of a governed interpretation and dispatch layer under `agent_control_stack/`.
+
+It is paired with the AOS/CDD example project in [examples/agent-control-stack](./examples/agent-control-stack/README.md) and demonstrates a narrow end-to-end flow:
+
+- restore
+- balance
+- classify
+- dispatch
+- governed AOS/CDD handoff
+
+Example:
+
+```powershell
+python -m agent_control_stack.cli --text "Run WP-001 now" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute --persist
+```
+
+That command produces:
+
+- a structured decision envelope
+- a governed execution result
+- persisted run artifacts under `runs/`
+
+The repository also includes:
+
+- unit tests
+- HTTP service tests
+- scenario-level end-to-end tests under `tests/scenarios/`
+- an eval runner via `python -m agent_control_stack.eval`
+- a policy-aware CI gate via `python -m agent_control_stack.policy_gate`
+- a persisted-run report via `python -m agent_control_stack.ops_report`
+- a run-retention maintenance command via `python -m agent_control_stack.run_maintenance`
+
+The current production-hardening path now also includes a governed policy artifact:
+
+- `examples/agent-control-stack/ops/policy-profile.yaml`
+- `examples/agent-control-stack/ops/security-threat-model.md`
+- `examples/agent-control-stack/ops/APR-001-security-validation.yaml`
+
+CI now emits machine-readable operational artifacts under `reports/` for:
+
+- vault health
+- scenario eval summary
+- policy gate result
+- persisted run report
+
+The package also exposes a minimal HTTP API:
+
+```powershell
+python -m agent_control_stack.service --port 8000
+```
+
+Primary endpoints:
+
+- `POST /interpret`
+- `POST /execute`
+- `GET /runs/{id}`
+
+Full API details: [docs/api.md](./docs/api.md)
+
+Quickstart for the current runtime: [QUICKSTART.md](./QUICKSTART.md)
+
+Architecture overview: [docs/architecture.md](./docs/architecture.md)
+
+Compatibility policy: [docs/compatibility.md](./docs/compatibility.md)
+
+Deployment guide: [docs/deployment.md](./docs/deployment.md)
+
+Release checklist: [docs/release-checklist.md](./docs/release-checklist.md)
+
+## Try It Quickly
+
+Install from the repository root:
+
+```powershell
+python -m pip install -e .
+```
+
+Run the main governed example:
+
+```powershell
+python -m agent_control_stack.cli --text "Run WP-001 now" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute --persist
+```
+
+That will:
+
+- interpret the request
+- apply policy and registered-case checks
+- dispatch into a governed AOS/CDD procedure
+- persist run artifacts under `runs/`
+
 ## Worked Example
 
 The example project under [examples/saas-api](./examples/saas-api/) demonstrates:
@@ -104,6 +196,8 @@ Compatibility policy:
 - minor releases may add optional fields
 - changes that make optional machine-readable fields required must increment the minor version and include migration guidance
 
+See [docs/compatibility.md](./docs/compatibility.md) for the fuller contract.
+
 ## Who Should Use This
 
 Use AOS/CDD v2 if:
@@ -123,7 +217,7 @@ Read [spec/15-boundaries.md](./spec/15-boundaries.md) before broad adoption.
 
 ## Open Source Project Status
 
-This repository is a release candidate for public use. It includes:
+This repository is ready for public evaluation and pilot use. It includes:
 
 - full framework spec
 - reusable templates
@@ -131,8 +225,11 @@ This repository is a release candidate for public use. It includes:
 - reference CI workflow
 - worked example
 - Tier 1 quickstart path
+- governed interpretation and dispatch runtime
+- policy-aware CI gate
+- scenario eval and ops reporting surfaces
 
-It is suitable for evaluation, pilot adoption, and extension.
+It is suitable for evaluation, pilot adoption, extension, and use as the starting point for a governed AI-development workflow.
 
 ## Contributing
 

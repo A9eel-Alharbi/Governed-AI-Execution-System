@@ -9,9 +9,11 @@ commands:
       - "WP status is ready"
       - "All hard dependencies are done"
       - "Referenced constraints are not red in vault health"
+      - "Session loader declares the governing policy profile"
     expected_agent_behavior:
       - "Load session artifact"
       - "Load current WP and referenced constraints"
+      - "Apply the declared policy profile before execution"
       - "Stop on blocker before implementation"
       - "Emit completion report before marking done"
     expected_output_format: "completion-report.yaml plus human-readable summary"

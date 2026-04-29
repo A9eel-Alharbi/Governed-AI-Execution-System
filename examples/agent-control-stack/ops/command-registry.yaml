@@ -1,0 +1,45 @@
+spec_version: "2.0.0"
+owner: "Tooling Owner"
+last_validated: "2026-04-29"
+commands:
+  - command: "/define-project"
+    maps_to: "project initialization"
+    target: "examples/agent-control-stack/constraints/vision.md"
+    preconditions:
+      - "No governed project constraints exist yet for the target repository"
+      - "Operator is authorized to create project-definition artifacts"
+    expected_agent_behavior:
+      - "Route the request into AOS/CDD quickstart-style constraint definition"
+      - "Clarify missing project-purpose, scope, and boundary information before implementation"
+      - "Do not write production code in this path"
+    expected_output_format: "updated constraint artifacts and concise summary"
+    human_review_gate: true
+  - command: "/wp WP-001"
+    maps_to: "work-package execution"
+    target: "examples/agent-control-stack/work-packages/WP-001-decision-envelope-and-case-registry.md"
+    preconditions:
+      - "WP status is ready"
+      - "Referenced constraints are green"
+      - "Session loader exists and policy allows repository execution"
+      - "Session loader declares the governing policy profile"
+    expected_agent_behavior:
+      - "Load session loader and referenced constraints"
+      - "Apply the declared policy profile before repository execution"
+      - "Stop on blocker before implementation"
+      - "Emit completion report before marking done"
+    expected_output_format: "completion-report.yaml and concise human summary"
+    human_review_gate: true
+  - command: "/ccr"
+    maps_to: "constraint change control"
+    target: "_templates/work-packages/constraint-change-request.yaml"
+    preconditions:
+      - "A referenced constraint changed materially or execution found a conflict"
+    expected_agent_behavior:
+      - "Open or update a CCR instead of silently mutating protected constraints"
+      - "Pause dependent execution until impact is assessed"
+    expected_output_format: "CCR artifact and impact summary"
+    human_review_gate: true
+change_log:
+  - date: "2026-04-29"
+    author: "OpenAI Codex"
+    change: "Initial example"

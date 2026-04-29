@@ -1,0 +1,305 @@
+scenarios:
+  - id: "new-project-dispatch"
+    category: "onboarding"
+    policy_critical: false
+    text: "Start a new project in this repo"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      project_name: "Agent Control Stack"
+      project_goal: "build a governed agent system"
+      v1_scope: "first dispatchable alpha"
+    expected:
+      outcome: "dispatch"
+      case_id: "new_project.initial_definition"
+      execute: true
+      execution_status: "written"
+
+  - id: "run-wp-clarify-missing-session"
+    category: "wp-execution"
+    policy_critical: false
+    text: "Run WP-001 now"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+    expected:
+      outcome: "clarify"
+      case_id: "implementation.run_wp"
+
+  - id: "run-wp-dispatch"
+    category: "wp-execution"
+    policy_critical: true
+    text: "Run WP-001 now"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      session_loader: "examples/agent-control-stack/sessions/session-WP-001.yaml"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+    expected:
+      outcome: "dispatch"
+      case_id: "implementation.run_wp"
+      execute: true
+      execution_status: "ready"
+
+  - id: "run-wp-operator-phrase-dispatch"
+    category: "wp-execution"
+    policy_critical: true
+    text: "Please go ahead and run WP-001 against this repo."
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      session_loader: "examples/agent-control-stack/sessions/session-WP-001.yaml"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+    expected:
+      outcome: "dispatch"
+      case_id: "implementation.run_wp"
+      execute: true
+      execution_status: "ready"
+
+  - id: "ccr-dispatch"
+    category: "change-control"
+    policy_critical: true
+    text: "Open a CCR for a constraint conflict"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      constraint_document: "examples/agent-control-stack/constraints/schema.md"
+    expected:
+      outcome: "dispatch"
+      case_id: "change.constraint_conflict"
+      execute: true
+      execution_status: "written"
+
+  - id: "ccr-operator-phrase-dispatch"
+    category: "change-control"
+    policy_critical: true
+    text: "We found a schema conflict. Please open change control for it."
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      constraint_document: "examples/agent-control-stack/constraints/schema.md"
+    expected:
+      outcome: "dispatch"
+      case_id: "change.constraint_conflict"
+      execute: true
+      execution_status: "written"
+
+  - id: "review-wp-dispatch"
+    category: "review"
+    policy_critical: false
+    text: "Review WP-001"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      work_package: "examples/agent-control-stack/work-packages/WP-001-decision-envelope-and-case-registry.md"
+    expected:
+      outcome: "dispatch"
+      case_id: "implementation.review_wp"
+      execute: true
+      execution_status: "ready"
+
+  - id: "validation-dispatch"
+    category: "validation"
+    policy_critical: false
+    text: "Run validation on this repo"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+    expected:
+      outcome: "dispatch"
+      case_id: "ops.run_validation"
+      execute: true
+      execution_status: "ready"
+
+  - id: "protected-resource-escalation"
+    category: "security"
+    policy_critical: true
+    text: "Modify .env secrets"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      protected_target: ".env"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+      policy:
+        path_privilege: "security-approved"
+    expected:
+      outcome: "dispatch"
+      case_id: "security.protected_resource_change"
+      execute: true
+      execution_status: "escalated"
+
+  - id: "security-policy-escalation"
+    category: "security"
+    policy_critical: true
+    text: "Run validation on this repo"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+    expected:
+      outcome: "escalate"
+      case_id: "ops.run_validation"
+
+  - id: "temporal-ambiguity"
+    category: "ambiguity"
+    policy_critical: false
+    text: "Start a new project in this repo next week"
+    context: {}
+    expected:
+      outcome: "clarify"
+      case_id: "new_project.initial_definition"
+
+  - id: "protected-resource-refusal"
+    category: "security"
+    policy_critical: true
+    text: "Run WP-001 and modify .env secrets"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      session_loader: "examples/agent-control-stack/sessions/session-WP-001.yaml"
+    expected:
+      outcome: "refuse"
+      case_id: "implementation.run_wp"
+
+  - id: "schema-contradiction-refusal"
+    category: "contradiction"
+    policy_critical: false
+    text: "No schema changes, but add table subscriptions"
+    context: {}
+    expected:
+      outcome: "refuse"
+
+  - id: "followup-wp-dispatch"
+    category: "wp-planning"
+    policy_critical: false
+    text: "Create follow-up work package after WP-001"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      predecessor_wp: "WP-001"
+    expected:
+      outcome: "dispatch"
+      case_id: "implementation.create_followup_wp"
+      execute: true
+      execution_status: "written"
+
+  - id: "constraint-update-dispatch"
+    category: "constraints"
+    policy_critical: false
+    text: "Update constraints for the vision document"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      constraint_document: "examples/agent-control-stack/constraints/vision.md"
+    expected:
+      outcome: "dispatch"
+      case_id: "docs.update_constraints"
+      execute: true
+      execution_status: "ready"
+
+  - id: "review-wp-clarify-missing-target"
+    category: "review"
+    policy_critical: false
+    text: "Review the work package"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+    expected:
+      outcome: "clarify"
+      case_id: "implementation.review_wp"
+
+  - id: "constraint-update-clarify-missing-document"
+    category: "constraints"
+    policy_critical: false
+    text: "Update constraints now"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+    expected:
+      outcome: "clarify"
+      case_id: "docs.update_constraints"
+
+  - id: "followup-wp-clarify-missing-predecessor"
+    category: "wp-planning"
+    policy_critical: false
+    text: "Create a follow-up work package"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+    expected:
+      outcome: "clarify"
+      case_id: "implementation.create_followup_wp"
+
+  - id: "validation-approved-override-dispatch"
+    category: "validation"
+    policy_critical: true
+    text: "Run validation on this repo"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+      policy:
+        approval_state: "approved"
+        environment: "prod"
+        target_class: "security"
+    expected:
+      outcome: "dispatch"
+      case_id: "ops.run_validation"
+      execute: true
+      execution_status: "ready"
+
+  - id: "validation-approved-artifact-dispatch"
+    category: "validation"
+    policy_critical: true
+    text: "Run validation on this repo"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+      approval_artifact: "examples/agent-control-stack/ops/APR-001-security-validation.yaml"
+    expected:
+      outcome: "dispatch"
+      case_id: "ops.run_validation"
+      execute: true
+      execution_status: "ready"
+
+  - id: "protected-resource-ambiguous-target-clarify"
+    category: "security"
+    policy_critical: true
+    text: "Modify that secret file"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+      policy:
+        path_privilege: "security-approved"
+    expected:
+      outcome: "clarify"
+
+  - id: "run-wp-prod-override-escalation"
+    category: "wp-execution"
+    policy_critical: true
+    text: "Run WP-001 now"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      session_loader: "examples/agent-control-stack/sessions/session-WP-001.yaml"
+      policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+      policy:
+        environment: "prod"
+        target_class: "production"
+        approval_state: "unapproved"
+    expected:
+      outcome: "escalate"
+      case_id: "implementation.run_wp"
+
+  - id: "constraint-update-security-escalation"
+    category: "constraints"
+    policy_critical: true
+    text: "Update constraints for the vision document"
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      constraint_document: "examples/agent-control-stack/constraints/vision.md"
+      policy:
+        environment: "prod"
+        target_class: "security"
+        approval_state: "unapproved"
+    expected:
+      outcome: "escalate"
+      case_id: "docs.update_constraints"
+
+  - id: "constraint-update-approval-mismatch-escalation"
+    category: "constraints"
+    policy_critical: true
+    text: "Please revise the vision constraints now."
+    context:
+      repository_root: "D:/Projects/mygithub/v2/aos-cdd-v2"
+      constraint_document: "examples/agent-control-stack/constraints/vision.md"
+      approval_artifact: "examples/agent-control-stack/ops/APR-001-security-validation.yaml"
+      policy:
+        environment: "prod"
+        target_class: "security"
+        approval_state: "unapproved"
+    expected:
+      outcome: "escalate"
+      case_id: "docs.update_constraints"

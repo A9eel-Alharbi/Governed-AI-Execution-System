@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Policy Profile",
+  "type": "object",
+  "required": ["spec_version", "owner", "last_validated", "defaults"],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "owner": { "type": "string" },
+    "last_validated": { "type": "string", "format": "date" },
+    "defaults": { "$ref": "#/$defs/policyFields" },
+    "case_overrides": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/policyFields"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "policyFields": {
+      "type": "object",
+      "properties": {
+        "environment": {
+          "type": "string",
+          "enum": ["dev", "staging", "prod"]
+        },
+        "approval_state": {
+          "type": "string",
+          "enum": ["unapproved", "approved"]
+        },
+        "target_class": {
+          "type": "string",
+          "enum": ["general", "security", "production", "infrastructure"]
+        },
+        "destructive_action": {
+          "type": "boolean"
+        },
+        "path_privilege": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

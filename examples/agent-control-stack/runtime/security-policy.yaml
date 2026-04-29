@@ -1,0 +1,3 @@
+policy_artifact: "examples/agent-control-stack/ops/policy-profile.yaml"
+policy:
+  path_privilege: "security-approved"

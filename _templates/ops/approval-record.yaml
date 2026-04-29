@@ -1,0 +1,19 @@
+spec_version: "2.0.0"
+approval_id: "APR-000"
+owner: "Security Lead"
+last_validated: "2026-01-01"
+status: "approved"
+approved_by:
+  - "security.lead"
+approved_at: "2026-01-01T00:00:00Z"
+scope:
+  case_ids:
+    - "ops.run_validation"
+  target_classes:
+    - "security"
+  environments:
+    - "prod"
+policy_overlay:
+  approval_state: "approved"
+notes:
+  - "Use approval artifacts to record governed exceptions or high-risk approvals."

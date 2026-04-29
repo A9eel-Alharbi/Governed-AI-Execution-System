@@ -13,3 +13,12 @@ Includes:
 - GitHub Actions validation workflow
 - worked SaaS API example with success and failure-path artifacts
 - Tier 1 quickstart path
+
+## Unreleased
+
+Combined-system maturity work on top of the original framework:
+
+- added `agent_control_stack` runtime, CLI, HTTP API, eval runner, policy gate, ops reporting, and run-maintenance commands
+- added governed policy profiles, session policy anchoring, and policy-aware CI enforcement
+- added threat-model artifacts and retention/reporting hardening
+- added compatibility and deployment guidance docs for production-style adoption

@@ -1,0 +1,51 @@
+spec_version: "2.0.0"
+session_id: "session-WP-001-01"
+work_package_id: "WP-001"
+owner: "agent-operator"
+last_validated: "2026-04-29"
+vault_health:
+  overall: "pass"
+  checked_from: "examples/agent-control-stack/ops/vault-health.yaml"
+policy_profile:
+  document: "examples/agent-control-stack/ops/policy-profile.yaml"
+  enforcement_mode: "required"
+constraints_to_load:
+  - document: "examples/agent-control-stack/constraints/schema.md"
+    sections:
+      - "Table: decision_envelopes"
+      - "Table: case_registrations"
+      - "Protected Fields and Prohibited Agent Actions"
+    permission: "READ-ONLY"
+  - document: "examples/agent-control-stack/constraints/openapi.yaml"
+    sections:
+      - "paths./v1/interpretations"
+      - "paths./v1/cases/validate"
+      - "paths./v1/execution-handoffs"
+    permission: "READ-ONLY"
+  - document: "examples/agent-control-stack/constraints/api-contract.md"
+    sections:
+      - "Error Contract Rules"
+      - "Prohibited Agent Actions"
+    permission: "READ-ONLY"
+  - document: "examples/agent-control-stack/constraints/security-rules.md"
+    sections:
+      - "Authorization Model"
+      - "Forbidden Patterns"
+      - "Prohibited Agent Actions"
+    permission: "READ-ONLY"
+  - document: "examples/agent-control-stack/constraints/testing-strategy.md"
+    sections:
+      - "Coverage Thresholds by Module Type"
+      - "Forbidden Test Patterns"
+    permission: "READ-ONLY"
+  - document: "examples/agent-control-stack/constraints/vision.md"
+    sections:
+      - "In Scope"
+      - "Out of Scope"
+      - "Architecture Direction Decisions"
+    permission: "ADVISORY"
+previous_session_summary: "No prior session."
+blockers_from_previous_session: []
+done_criteria_reference:
+  document: "examples/agent-control-stack/work-packages/WP-001-decision-envelope-and-case-registry.md"
+  section: "6. Done Criteria"

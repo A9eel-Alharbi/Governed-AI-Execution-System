@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: Agent Control Stack API
+  version: 0.1.0
+paths:
+  /v1/interpretations:
+    post:
+      summary: Interpret one request and emit a decision envelope
+      responses:
+        "201":
+          description: Decision envelope created
+        "409":
+          description: Contradiction detected
+        "422":
+          description: Clarification required
+  /v1/interpretations/{decisionId}:
+    get:
+      summary: Fetch one decision envelope
+      parameters:
+        - name: decisionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Decision envelope fetched
+        "404":
+          description: Decision not found
+  /v1/execution-handoffs:
+    post:
+      summary: Create an execution handoff into a governed runtime
+      responses:
+        "201":
+          description: Handoff created
+        "403":
+          description: Policy denied
+        "409":
+          description: Registry conflict
+  /v1/cases/validate:
+    post:
+      summary: Validate a case against the registry and policy layer
+      responses:
+        "200":
+          description: Case validation result
+        "404":
+          description: Case not registered

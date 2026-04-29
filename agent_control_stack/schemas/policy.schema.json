@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Control Stack Policy Context",
+  "type": "object",
+  "properties": {
+    "environment": {
+      "enum": ["dev", "staging", "prod"]
+    },
+    "approval_state": {
+      "enum": ["unapproved", "approved"]
+    },
+    "target_class": {
+      "enum": ["general", "security", "production", "infrastructure"]
+    },
+    "destructive_action": {
+      "type": "boolean"
+    },
+    "path_privilege": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

@@ -58,6 +58,10 @@
         }
       }
     },
+    "approvals_in_force": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "cross_document_checks": {
       "type": "array",
       "items": {

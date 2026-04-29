@@ -6,6 +6,9 @@ last_validated: "2026-04-28"
 vault_health:
   overall: "fail"
   checked_from: "examples/saas-api/ops/vault-health-after-CCR.yaml"
+policy_profile:
+  document: "examples/saas-api/ops/policy-profile.yaml"
+  enforcement_mode: "required"
 constraints_to_load:
   - document: "examples/saas-api/constraints/schema.md"
     sections:

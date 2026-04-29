@@ -26,6 +26,22 @@ documents:
     staleness_flag: "red"
     wp_reference_count: 3
     open_conflicts: 1
+  - id: "policy-saas-core"
+    path: "examples/saas-api/ops/policy-profile.yaml"
+    owner: "Policy Admin"
+    last_validated: "2026-04-28"
+    validation_method: "automated"
+    staleness_flag: "green"
+    wp_reference_count: 2
+    open_conflicts: 0
+  - id: "threat-model-saas-core"
+    path: "examples/saas-api/ops/security-threat-model.md"
+    owner: "Security Lead"
+    last_validated: "2026-04-28"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 2
+    open_conflicts: 0
 open_constraint_conflicts:
   - document_id: "schema-saas-core"
     summary: "Approved CCR-001 renamed plan_code to plan_key; in-flight WP-002 still targets old field"
@@ -38,3 +54,9 @@ cross_document_checks:
   - check: "schema-to-api alignment"
     status: "fail"
     summary: "Schema rename approved but OpenAPI and in-flight WP execution still reference pre-CCR naming"
+  - check: "session policy anchoring"
+    status: "pass"
+    summary: "WP-002 post-CCR session still references the governed policy profile even while execution is blocked"
+  - check: "security threat model alignment"
+    status: "pass"
+    summary: "threat model remains aligned even while CCR blocks execution because the trust boundaries and review triggers did not change"

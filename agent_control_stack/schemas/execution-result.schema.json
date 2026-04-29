@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Control Stack Execution Result",
+  "type": "object",
+  "required": ["procedure", "target", "status", "summary", "artifacts", "payload"],
+  "properties": {
+    "procedure": { "type": "string" },
+    "target": { "type": "string" },
+    "status": { "type": "string" },
+    "summary": { "type": "string" },
+    "artifacts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "payload": { "type": "object" }
+  },
+  "additionalProperties": false
+}

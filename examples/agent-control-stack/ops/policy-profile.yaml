@@ -1,0 +1,20 @@
+spec_version: "2.0.0"
+owner: "Policy Admin"
+last_validated: "2026-04-29"
+defaults:
+  environment: "staging"
+  approval_state: "approved"
+  target_class: "general"
+  destructive_action: false
+case_overrides:
+  "ops.run_validation":
+    environment: "prod"
+    approval_state: "unapproved"
+    target_class: "security"
+  "security.protected_resource_change":
+    environment: "prod"
+    approval_state: "approved"
+    target_class: "security"
+notes:
+  - "Repository execution defaults to approved staging governance for non-sensitive cases."
+  - "Validation and protected-resource paths are treated as higher-risk policy surfaces."

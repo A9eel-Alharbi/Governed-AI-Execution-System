@@ -9,6 +9,7 @@
     "owner",
     "last_validated",
     "vault_health",
+    "policy_profile",
     "constraints_to_load",
     "done_criteria_reference"
   ],
@@ -24,6 +25,16 @@
       "properties": {
         "overall": { "enum": ["pass", "fail"] },
         "checked_from": { "type": "string" }
+      }
+    },
+    "policy_profile": {
+      "type": "object",
+      "required": ["document", "enforcement_mode"],
+      "properties": {
+        "document": { "type": "string" },
+        "enforcement_mode": {
+          "enum": ["advisory", "required"]
+        }
       }
     },
     "constraints_to_load": {

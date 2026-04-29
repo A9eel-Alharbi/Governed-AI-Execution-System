@@ -6,6 +6,9 @@ last_validated: "2026-01-01"
 vault_health:
   overall: "pass"
   checked_from: "aos/health/vault-health.yaml"
+policy_profile:
+  document: "ops/policy-profile.yaml"
+  enforcement_mode: "required"
 constraints_to_load:
   - document: "constraints/schema.md"
     sections:

@@ -1,0 +1,15 @@
+spec_version: "2.0.0"
+owner: "Policy Admin"
+last_validated: "2026-01-01"
+defaults:
+  environment: "dev"
+  approval_state: "unapproved"
+  target_class: "general"
+  destructive_action: false
+case_overrides:
+  "security.protected_resource_change":
+    target_class: "security"
+    approval_state: "approved"
+notes:
+  - "Defaults apply to every decision unless a case override or request-scoped policy field narrows or replaces them."
+  - "Keep protected-resource and production-class cases fail-closed unless explicit approval semantics are defined."

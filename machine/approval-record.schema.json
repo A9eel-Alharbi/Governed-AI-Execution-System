@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Approval Record",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "approval_id",
+    "owner",
+    "last_validated",
+    "status",
+    "approved_by",
+    "approved_at",
+    "scope",
+    "policy_overlay"
+  ],
+  "properties": {
+    "spec_version": { "type": "string" },
+    "approval_id": { "type": "string" },
+    "owner": { "type": "string" },
+    "last_validated": { "type": "string", "format": "date" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "approved", "rejected", "expired"]
+    },
+    "approved_by": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "approved_at": { "type": "string", "format": "date-time" },
+    "scope": {
+      "type": "object",
+      "required": ["case_ids", "target_classes", "environments"],
+      "properties": {
+        "case_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_classes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["general", "security", "production", "infrastructure"]
+          }
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["dev", "staging", "prod"]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy_overlay": {
+      "type": "object",
+      "properties": {
+        "environment": {
+          "type": "string",
+          "enum": ["dev", "staging", "prod"]
+        },
+        "approval_state": {
+          "type": "string",
+          "enum": ["unapproved", "approved"]
+        },
+        "target_class": {
+          "type": "string",
+          "enum": ["general", "security", "production", "infrastructure"]
+        },
+        "destructive_action": {
+          "type": "boolean"
+        },
+        "path_privilege": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

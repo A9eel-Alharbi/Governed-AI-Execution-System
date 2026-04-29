@@ -1,0 +1,59 @@
+cases:
+  - case_id: "new_project.initial_definition"
+    procedure: "aos_quickstart_onboarding"
+    target: "examples/agent-control-stack/constraints/vision.md"
+    human_review_gate: true
+    required_context: []
+  - case_id: "implementation.create_first_wp"
+    procedure: "draft_first_work_package"
+    target: "examples/agent-control-stack/work-packages/WP-001-decision-envelope-and-case-registry.md"
+    human_review_gate: true
+    required_context:
+      - "repository_root"
+  - case_id: "implementation.run_wp"
+    procedure: "run_governed_work_package"
+    target: "examples/agent-control-stack/sessions/session-WP-001.yaml"
+    human_review_gate: true
+    required_context:
+      - "repository_root"
+      - "session_loader"
+  - case_id: "implementation.review_wp"
+    procedure: "review_governed_work_package"
+    target: "examples/agent-control-stack/work-packages/WP-001-decision-envelope-and-case-registry.md"
+    human_review_gate: false
+    required_context:
+      - "repository_root"
+      - "work_package"
+  - case_id: "implementation.create_followup_wp"
+    procedure: "draft_followup_work_package"
+    target: "examples/agent-control-stack/work-packages/WP-001-decision-envelope-and-case-registry.md"
+    human_review_gate: true
+    required_context:
+      - "repository_root"
+      - "predecessor_wp"
+  - case_id: "change.constraint_conflict"
+    procedure: "open_constraint_change_request"
+    target: "_templates/work-packages/constraint-change-request.yaml"
+    human_review_gate: true
+    required_context:
+      - "repository_root"
+  - case_id: "docs.update_constraints"
+    procedure: "prepare_constraint_update"
+    target: "examples/agent-control-stack/constraints/vision.md"
+    human_review_gate: true
+    required_context:
+      - "repository_root"
+      - "constraint_document"
+  - case_id: "ops.run_validation"
+    procedure: "run_aos_validation"
+    target: "tools/aos_validate.py"
+    human_review_gate: false
+    required_context:
+      - "repository_root"
+  - case_id: "security.protected_resource_change"
+    procedure: "escalate_protected_resource_change"
+    target: "examples/agent-control-stack/constraints/security-rules.md"
+    human_review_gate: true
+    required_context:
+      - "repository_root"
+      - "path_privilege"

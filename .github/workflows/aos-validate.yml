@@ -1,4 +1,4 @@
-name: aos-validate
+name: governed-agent-ci
 
 on:
   pull_request:
@@ -6,25 +6,44 @@ on:
     branches: [main]
 
 jobs:
-  validate-artifacts:
+  validate-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: aos-cdd-v2
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install validator dependencies
-        run: python -m pip install pyyaml
+      - name: Install package and dependencies
+        run: python -m pip install -e .
+      - name: Install build tooling
+        run: python -m pip install build
+      - name: Build sdist and wheel
+        run: python -m build
+      - name: Smoke check built wheel install
+        run: |
+          python -m pip install --force-reinstall dist/*.whl
+          python -c "import agent_control_stack; print(agent_control_stack.__all__)"
       - name: Validate machine-readable artifacts
         run: python tools/aos_validate.py validate
+      - name: Run unit, service, and scenario tests
+        run: python -m unittest discover -s tests -p "test_*.py"
+      - name: Ensure reports directory exists
+        run: mkdir -p reports
+      - name: Run scenario eval summary
+        run: python -m agent_control_stack.eval > reports/agent-control-eval.json
+      - name: Enforce policy-aware gate
+        run: python -m agent_control_stack.policy_gate --eval-report reports/agent-control-eval.json > reports/agent-control-policy-gate.json
+      - name: Build persisted run report
+        run: python -m agent_control_stack.ops_report --store-dir runs > reports/agent-control-run-report.json
       - name: Generate vault health report
         run: python tools/aos_validate.py health-report
-      - name: Upload health report
+      - name: Upload operational reports
         uses: actions/upload-artifact@v4
         with:
-          name: vault-health-report
-          path: aos-cdd-v2/reports/vault-health-report.json
+          name: governed-agent-reports
+          path: |
+            reports/vault-health-report.json
+            reports/agent-control-eval.json
+            reports/agent-control-policy-gate.json
+            reports/agent-control-run-report.json

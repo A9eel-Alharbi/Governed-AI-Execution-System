@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Interpret Request",
+  "type": "object",
+  "required": ["text"],
+  "properties": {
+    "text": { "type": "string" },
+    "context": { "type": "object" },
+    "execute": { "type": "boolean" },
+    "persist": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

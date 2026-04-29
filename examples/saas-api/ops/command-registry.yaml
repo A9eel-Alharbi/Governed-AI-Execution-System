@@ -9,8 +9,10 @@ commands:
       - "WP status is ready"
       - "All hard dependencies are done"
       - "Referenced constraints are green"
+      - "Session loader declares the governing policy profile"
     expected_agent_behavior:
       - "Load session loader and referenced constraints"
+      - "Apply the declared policy profile before implementation"
       - "Stop on blocker before implementation"
       - "Emit completion report before marking done"
     expected_output_format: "completion-report.yaml and concise human summary"

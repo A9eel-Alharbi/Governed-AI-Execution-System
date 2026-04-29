@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Execute Request",
+  "type": "object",
+  "required": ["decision"],
+  "properties": {
+    "decision": { "type": "object" },
+    "context": { "type": "object" },
+    "persist": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

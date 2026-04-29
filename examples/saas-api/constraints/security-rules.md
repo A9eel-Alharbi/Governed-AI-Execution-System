@@ -53,6 +53,11 @@ RBAC with `tenant_member`, `tenant_admin`, `billing_admin`, and `internal_suppor
 - `A02 Cryptographic Failures`: no plaintext secret persistence
 - `A03 Injection`: parameterized queries only
 
+## 7.1 Threat Model Reference
+
+- Canonical threat model: `examples/saas-api/ops/security-threat-model.md`
+- Review the threat model before adding new provider integrations, support paths, or background mutation flows.
+
 ## 8. Prohibited Agent Actions
 
 - Do not weaken role checks for test convenience.

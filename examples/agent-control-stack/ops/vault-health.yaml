@@ -1,0 +1,88 @@
+spec_version: "2.0.0"
+generated_at: "2026-04-29T00:00:00Z"
+overall_status: "green"
+documents:
+  - id: "vision-agent-control-core"
+    path: "examples/agent-control-stack/constraints/vision.md"
+    owner: "Product Lead"
+    last_validated: "2026-04-29"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+  - id: "schema-agent-control-core"
+    path: "examples/agent-control-stack/constraints/schema.md"
+    owner: "Backend Lead"
+    last_validated: "2026-04-29"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+  - id: "api-agent-control-core"
+    path: "examples/agent-control-stack/constraints/openapi.yaml"
+    owner: "API Lead"
+    last_validated: "2026-04-29"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+  - id: "api-agent-control-companion"
+    path: "examples/agent-control-stack/constraints/api-contract.md"
+    owner: "API Lead"
+    last_validated: "2026-04-29"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+  - id: "security-agent-control-core"
+    path: "examples/agent-control-stack/constraints/security-rules.md"
+    owner: "Security Lead"
+    last_validated: "2026-04-29"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+  - id: "policy-agent-control-core"
+    path: "examples/agent-control-stack/ops/policy-profile.yaml"
+    owner: "Policy Admin"
+    last_validated: "2026-04-29"
+    validation_method: "automated"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+  - id: "threat-model-agent-control-core"
+    path: "examples/agent-control-stack/ops/security-threat-model.md"
+    owner: "Security Lead"
+    last_validated: "2026-04-29"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+  - id: "testing-agent-control-core"
+    path: "examples/agent-control-stack/constraints/testing-strategy.md"
+    owner: "Engineering Lead"
+    last_validated: "2026-04-29"
+    validation_method: "manual"
+    staleness_flag: "green"
+    wp_reference_count: 1
+    open_conflicts: 0
+open_constraint_conflicts: []
+ccrs_in_flight: []
+approvals_in_force:
+  - "APR-001"
+cross_document_checks:
+  - check: "decision outcome vocabulary alignment"
+    status: "pass"
+    summary: "vision, schema, API companion, and WP all use clarify/refuse/dispatch/escalate as the only top-level outcomes"
+  - check: "governed execution handoff alignment"
+    status: "pass"
+    summary: "command registry and WP both require AOS/CDD session-based execution rather than direct tool fallback"
+  - check: "policy artifact alignment"
+    status: "pass"
+    summary: "policy profile defines staging defaults and higher-risk case overrides that match the agent-control runtime scenarios"
+  - check: "security threat model alignment"
+    status: "pass"
+    summary: "security rules, policy profile, and executor hardening align with the documented threat surfaces and mitigations"
+  - check: "approval artifact alignment"
+    status: "pass"
+    summary: "APR-001 authorizes production-class security validation and matches the policy profile and scenario coverage"
