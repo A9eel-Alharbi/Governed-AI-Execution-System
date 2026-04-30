@@ -16,6 +16,21 @@ The core principle is:
 
 `The LLM is not the controller. The LLM is the bounded executor inside a governed system.`
 
+ ## Production Readiness Backlog
+
+  The GitHub issue tracker is intentionally used as the system hardening and production-readiness backlog.
+
+  These issues are not only bug reports. They also cover:
+
+  - end-to-end verification
+  - layer-by-layer architecture validation
+  - security hardening
+  - documentation completeness
+  - regression protection
+  - operational readiness
+
+  The goal is simple: when this backlog is resolved, the Governed AI Execution System is not just conceptually correct, but verified, hardened, and ready for serious self-hosted use.
+
 ## Project Status
 
 Current status:
