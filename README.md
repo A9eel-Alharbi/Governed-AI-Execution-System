@@ -43,6 +43,13 @@ Known limitation:
 
 - platform policy edits are versioned and audited, but are not yet automatically written back into connected repo policy artifacts
 
+Maintainer-facing architecture documents:
+
+- [docs/system-map.md](./docs/system-map.md)
+- [docs/request-lifecycle.md](./docs/request-lifecycle.md)
+- [docs/maintainer-guide.md](./docs/maintainer-guide.md)
+- [docs/known-gaps.md](./docs/known-gaps.md)
+
 ## What This Repository Is
 
 This repository is an open-source reference implementation of a six-layer governed AI execution architecture.
@@ -84,6 +91,13 @@ The model is the last step.
 ## Architecture
 
 The full system is built as six layers plus four control-completing components.
+
+For the canonical maintainer map, see:
+
+- [docs/system-map.md](./docs/system-map.md)
+- [docs/request-lifecycle.md](./docs/request-lifecycle.md)
+- [docs/maintainer-guide.md](./docs/maintainer-guide.md)
+- [docs/known-gaps.md](./docs/known-gaps.md)
 
 ### Layer 1: Product UI
 
