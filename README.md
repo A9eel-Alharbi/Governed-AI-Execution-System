@@ -1,6 +1,8 @@
-# AOS/CDD v2
+# Governed AI Execution System (AOS/CDD v2)
 
-AOS/CDD v2 is a governed AI execution system for software delivery.
+Governed AI Execution System is an open-source governed AI execution architecture for software delivery.
+
+Open-source reference implementation of a six-layer governed AI execution architecture where requests pass through policy, HITL approval, bounded execution, dry-run, rollback visibility, and audit before side effects are allowed.
 
 It combines:
 
@@ -11,6 +13,18 @@ It combines:
 The core principle is:
 
 `The LLM is not the controller. The LLM is the bounded executor inside a governed system.`
+
+## Project Status
+
+Current status:
+
+- architecture complete for the v1 test-phase model
+- open-source reference implementation available in this repository
+- suitable for evaluation, pilot use, extension, and self-hosted experimentation
+
+Known limitation:
+
+- platform policy edits are versioned and audited, but are not yet automatically written back into connected repo policy artifacts
 
 ## What This Repository Is
 
@@ -446,6 +460,7 @@ At the current reviewed state:
 - Compatibility: [docs/compatibility.md](./docs/compatibility.md)
 - Deployment: [docs/deployment.md](./docs/deployment.md)
 - Release checklist: [docs/release-checklist.md](./docs/release-checklist.md)
+- First release note: [docs/releases/v1.0.0-test-phase.md](./docs/releases/v1.0.0-test-phase.md)
 - Platform workspace: [platform/README.md](./platform/README.md)
 
 ## Versioning
