@@ -1,5 +1,7 @@
 # Governed AI Execution System (AOS/CDD v2)
 
+Full Architecture Open this file with live server (governed_ai_architecture.html)
+
 Governed AI Execution System is an open-source governed AI execution architecture for software delivery.
 
 Open-source reference implementation of a six-layer governed AI execution architecture where requests pass through policy, HITL approval, bounded execution, dry-run, rollback visibility, and audit before side effects are allowed.
