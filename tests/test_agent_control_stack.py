@@ -4,7 +4,7 @@ import unittest
 from datetime import date
 from pathlib import Path
 
-from agent_control_stack.executor import GovernedExecutor
+from agent_control_stack.executor import GovernedExecutionPlanner, GovernedExecutor
 from agent_control_stack.executor import ExecutionError
 from agent_control_stack.pipeline import AgentControlPipeline
 from agent_control_stack.store import FileSystemRunStore
@@ -22,6 +22,7 @@ class AgentControlPipelineTests(unittest.TestCase):
 
     def setUp(self) -> None:
         self.pipeline = AgentControlPipeline.from_registry_file(REGISTRY)
+        self.planner = GovernedExecutionPlanner()
         self.executor = GovernedExecutor()
 
     def test_restoration_and_new_project_dispatch(self) -> None:
@@ -199,6 +200,47 @@ class AgentControlPipelineTests(unittest.TestCase):
         self.assertTrue(Path(result.artifacts[0]).exists())
         self.assertIn("Product Purpose", Path(result.artifacts[0]).read_text(encoding="utf-8"))
 
+    def test_plan_run_wp_returns_bounds_without_execution(self) -> None:
+        envelope = self.pipeline.decide(
+            "Run WP-001 now",
+            {
+                "repository_root": str(ROOT),
+                "session_loader": "examples/agent-control-stack/sessions/session-WP-001.yaml",
+                "policy_artifact": "examples/agent-control-stack/ops/policy-profile.yaml",
+            },
+        )
+        plan = self.planner.plan(
+            envelope,
+            {
+                "repository_root": str(ROOT),
+                "session_loader": "examples/agent-control-stack/sessions/session-WP-001.yaml",
+                "policy_artifact": "examples/agent-control-stack/ops/policy-profile.yaml",
+            },
+        )
+        self.assertEqual(plan.status, "ready")
+        self.assertEqual(plan.payload["work_package_id"], "WP-001")
+        self.assertFalse(plan.write_operations)
+
+    def test_plan_first_wp_declares_writes_without_performing_them(self) -> None:
+        envelope = self.pipeline.decide(
+            "Create work package for the first implementation task",
+            {"repository_root": str(ROOT)},
+        )
+        output_dir = TEST_OUTPUT / "work-packages-plan-only"
+        plan = self.planner.plan(
+            envelope,
+            {
+                "repository_root": str(ROOT),
+                "output_dir": str(output_dir),
+                "project_name": "Agent Control Stack",
+                "project_goal": "build a governed agent system",
+                "first_wp_scope": "implement the decision envelope",
+            },
+        )
+        self.assertEqual(plan.status, "written")
+        self.assertTrue(plan.write_operations)
+        self.assertFalse(Path(plan.artifacts[0]).exists())
+
     def test_execute_create_first_wp_writes_draft(self) -> None:
         envelope = self.pipeline.decide(
             "Create work package for the first implementation task",
@@ -222,6 +264,31 @@ class AgentControlPipelineTests(unittest.TestCase):
         draft_text = draft_path.read_text(encoding="utf-8")
         self.assertIn("## Document Control", draft_text)
         self.assertIn("WP-001", draft_text)
+
+    def test_execute_create_first_wp_dry_run_skips_writes(self) -> None:
+        envelope = self.pipeline.decide(
+            "Create work package for the first implementation task",
+            {"repository_root": str(ROOT)},
+        )
+        output_dir = TEST_OUTPUT / "work-packages-dry-run"
+        result = self.executor.execute(
+            envelope,
+            {
+                "repository_root": str(ROOT),
+                "output_dir": str(output_dir),
+                "project_name": "Agent Control Stack",
+                "project_goal": "build a governed agent system",
+                "first_wp_scope": "implement the decision envelope",
+                "mode": "DRY_RUN",
+            },
+        )
+        self.assertEqual(result.status, "simulated")
+        draft_path = Path(result.artifacts[0])
+        self.assertFalse(draft_path.exists())
+        self.assertEqual(result.payload["mode"], "DRY_RUN")
+        self.assertTrue(result.payload["skipped_writes"])
+        self.assertTrue(result.payload["declared_writes"])
+        self.assertEqual(result.payload["write_enforcement_mode"], "explicit")
 
     def test_execute_run_wp_returns_governed_plan(self) -> None:
         envelope = self.pipeline.decide(
@@ -286,6 +353,26 @@ class AgentControlPipelineTests(unittest.TestCase):
         )
         self.assertEqual(result.status, "written")
         self.assertTrue(Path(result.artifacts[0]).exists())
+
+    def test_execute_constraint_change_request_dry_run_skips_writes(self) -> None:
+        envelope = self.pipeline.decide(
+            "Open a CCR for a constraint conflict",
+            {"repository_root": str(ROOT)},
+        )
+        output_dir = TEST_OUTPUT / "ccr-dry-run"
+        result = self.executor.execute(
+            envelope,
+            {
+                "repository_root": str(ROOT),
+                "output_dir": str(output_dir),
+                "constraint_document": "examples/agent-control-stack/constraints/schema.md",
+                "mode": "DRY_RUN",
+            },
+        )
+        self.assertEqual(result.status, "simulated")
+        self.assertFalse(Path(result.artifacts[0]).exists())
+        self.assertIn("would_write_text", " ".join(result.payload["skipped_writes"]))
+        self.assertEqual(result.payload["write_enforcement_mode"], "explicit")
 
     def test_execute_constraint_change_request_writes_file(self) -> None:
         envelope = self.pipeline.decide(

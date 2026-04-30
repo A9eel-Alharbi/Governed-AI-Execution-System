@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Platform Run Request",
+  "type": "object",
+  "required": [
+    "project_id",
+    "text"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "execute": {
+      "type": "boolean"
+    },
+    "persist": {
+      "type": "boolean"
+    },
+    "context": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

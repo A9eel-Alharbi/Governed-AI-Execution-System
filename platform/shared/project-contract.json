@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Platform Project Contract",
+  "type": "object",
+  "required": [
+    "project_id",
+    "name",
+    "slug",
+    "repository_url",
+    "default_branch",
+    "status"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "repository_url": {
+      "type": "string"
+    },
+    "default_branch": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "connected",
+        "active",
+        "blocked"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

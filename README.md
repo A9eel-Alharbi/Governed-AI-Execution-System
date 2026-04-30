@@ -1,239 +1,460 @@
 # AOS/CDD v2
 
-AOS/CDD v2 is a repository-native framework for AI-assisted software delivery.
+AOS/CDD v2 is a governed AI execution system for software delivery.
 
-`AOS` stands for `Agent Operating System`.
-`CDD` stands for `Constraint-Driven Development`.
+It combines:
 
-It exists to solve a specific engineering problem: AI coding sessions are fast, but they drift. Models forget context, invent unstated assumptions, change more than requested, and leave weak audit trails. AOS/CDD v2 turns that into a governed execution model with explicit constraints, bounded work packages, machine-readable session context, health checks, and completion evidence.
+- `AOS/CDD`: a repository-native framework for bounded AI-assisted software work
+- `agent_control_stack`: an interpretation, policy, approval, and dispatch runtime
+- `platform/`: a reference hosted product layer that shows how the system can be operated through a web UI and API
 
-## Choose Your Starting Point
+The core principle is:
 
-- `Tier 1: Constraint Core`
-  Use this if you are solo, early-stage, testing the framework, or want the lowest-friction path. Start in [quickstart/README.md](./quickstart/README.md).
-- `Tier 2: Full Execution Discipline`
-  Use this if you want bounded AI execution with work packages, session loaders, done criteria, and completion reports. Start in [spec/03-tiered-adoption.md](./spec/03-tiered-adoption.md) and [_templates/](./_templates/).
-- `Tier 3: Integrated Operations`
-  Use this only after Tier 2 is already working in a real repo and you want CI/CD, validator-driven enforcement, and workflow integration. Start in [spec/09-tooling-integration.md](./spec/09-tooling-integration.md).
+`The LLM is not the controller. The LLM is the bounded executor inside a governed system.`
 
-If you are unsure, start with `Tier 1`.
+## What This Repository Is
 
-## What This Is
+This repository is an open-source reference implementation of a six-layer governed AI execution architecture.
 
-This repository is not an application and not a runtime SDK.
+It is not just:
 
-It is an operating framework for teams that want AI coding work to be:
+- a prompt pattern
+- a spec-only repo
+- a simple coding agent wrapper
 
-- bounded
-- repeatable
-- reviewable
-- auditable
-- recoverable when constraints change
+It is a system that moves a request through:
 
-## What It Contains
+1. product UI
+2. platform/project state
+3. interpretation/control
+4. human approval
+5. governed execution planning
+6. bounded execution and audit
 
-- `spec/`: canonical framework specification
-- `_templates/`: reusable artifacts for real projects
-- `machine/`: schemas for machine-readable operational files
-- `tools/`: reference validator and enforcement helpers
-- `examples/`: worked example project using the framework
-- `quickstart/`: minimum viable Tier 1 adoption path
-- `.github/workflows/`: baseline CI validation workflow
+before any meaningful side effects are allowed.
 
-## Start Here
+## Why It Exists
 
-- New to the framework: [docs/START-HERE.md](./docs/START-HERE.md)
-- Want the lightest entry path: [quickstart/README.md](./quickstart/README.md)
-- Want the full model: [spec/00-index.md](./spec/00-index.md)
-- Want to see a real example: [spec/14-worked-example.md](./spec/14-worked-example.md)
+Most AI coding systems let the model decide too much too early.
 
-## Core Ideas
+That creates predictable failure modes:
 
-The framework is built around a small set of operational artifacts:
+- ambiguous requests get executed instead of clarified
+- unsafe or high-risk actions are not gated properly
+- scope drifts across sessions
+- repo changes happen without stable constraints
+- failures are hard to audit after the fact
 
-- `Vision`: what the product is and is not
-- `Constraints`: the rules the agent must obey
-- `Work Package (WP)`: the exact bounded task the agent may execute
-- `Session Loader`: machine-readable runtime context for one session
-- `Vault Health`: whether the constraint documents are safe to trust
-- `CCR`: formal change request for constraint changes
-- `Completion Report`: what the agent changed and whether it actually satisfied the WP
+AOS/CDD v2 inverts that design.
 
-## Adoption Tiers
+Governance is the product.
+The model is the last step.
 
-- `Tier 1`: Constraint Core
-  Use this for solo builders, small experiments, or first adoption.
-- `Tier 2`: Full Execution Discipline
-  Use this when teams want bounded AI execution with WPs and session loaders.
-- `Tier 3`: Integrated Operations
-  Use this when CI, code review, and tracker integration need to enforce the model.
+## Architecture
 
-Read [spec/03-tiered-adoption.md](./spec/03-tiered-adoption.md) for the full tier model.
+The full system is built as six layers plus four control-completing components.
 
-## Quick Validation
+### Layer 1: Product UI
 
-Run these from the repository root:
+The user-facing surface.
+
+It is responsible for:
+
+- creating projects
+- connecting repos
+- editing policy posture
+- submitting governed requests
+- reviewing approvals
+- reviewing run history and failures
+- reviewing policy history and audit data
+
+It does not classify requests or execute tools.
+
+Reference implementation:
+
+- [platform/web](./platform/web)
+
+### Layer 2: Platform / Project State
+
+The product backend and state layer.
+
+It is responsible for:
+
+- users and auth
+- projects
+- repo connection metadata
+- request records
+- approvals
+- policy profiles
+- run history
+- single-request lock state
+
+It manages state and forwards requests to the control layer.
+It does not decide request meaning.
+
+Reference implementation:
+
+- [platform/api](./platform/api)
+
+### Layer 3: Interpretation / Control
+
+The gatekeeper.
+
+It is responsible for:
+
+- context restoration
+- normalization / balancing
+- case classification
+- policy application
+- approval-artifact policy overlays
+- decision outcomes:
+  - `clarify`
+  - `refuse`
+  - `dispatch`
+  - `escalate`
+
+Nothing should reach governed execution without passing through this layer.
+
+Reference implementation:
+
+- [agent_control_stack/pipeline.py](./agent_control_stack/pipeline.py)
+- [agent_control_stack/policy.py](./agent_control_stack/policy.py)
+- [agent_control_stack/runtime/case_registry.yaml](./agent_control_stack/runtime/case_registry.yaml)
+
+### HITL Gate
+
+The human-in-the-loop approval checkpoint between classification and execution.
+
+Dispatchable requests pause here.
+Humans can:
+
+- approve
+- reject
+- escalate
+
+This is a state machine and audit record, not an AI decision.
+
+Reference implementation:
+
+- governed request lifecycle in [platform/api/app](./platform/api/app)
+- approval queue UI in [platform/web](./platform/web)
+
+### Layer 4: Governed Execution
+
+The bounded execution planning layer.
+
+It is responsible for:
+
+- selecting the governed procedure
+- loading work packages, sessions, constraints, and artifacts
+- applying repo-root path safety
+- preparing dry-run-aware write declarations
+- defining exactly what execution is allowed to do
+
+It decides bounds.
+It does not itself decide policy.
+
+Reference implementation:
+
+- [agent_control_stack/executor.py](./agent_control_stack/executor.py)
+  - `GovernedExecutionPlanner`
+
+### Layer 5: Agent / Tool Execution
+
+The last-mile executor.
+
+It is responsible for:
+
+- carrying out only declared operations
+- honoring dry-run mode
+- producing completion evidence
+- surfacing failures with traceability
+
+This is where model- or tool-like action belongs.
+It is intentionally downstream of all governance.
+
+Reference implementation:
+
+- [agent_control_stack/executor.py](./agent_control_stack/executor.py)
+  - `GovernedExecutor`
+
+### Layer 6: Audit / Ops
+
+The audit and operational visibility layer.
+
+It is responsible for:
+
+- request records
+- decision traces
+- execution records
+- policy context capture
+- approvals
+- failure traces
+- retention
+- CI validation
+- machine-readable reports
+
+Audit is first-class, not an afterthought.
+
+Reference implementation:
+
+- [agent_control_stack/store.py](./agent_control_stack/store.py)
+- [agent_control_stack/ops_report.py](./agent_control_stack/ops_report.py)
+- [agent_control_stack/eval.py](./agent_control_stack/eval.py)
+- [agent_control_stack/policy_gate.py](./agent_control_stack/policy_gate.py)
+- [.github/workflows/aos-validate.yml](./.github/workflows/aos-validate.yml)
+
+## The Four V1 Control Components
+
+These complete the v1 architecture.
+
+### 1. HITL Gate
+
+Every `dispatch` request enters a human approval checkpoint before Layer 4 execution.
+
+Implemented behavior includes:
+
+- `PENDING_APPROVAL`
+- `APPROVED`
+- `REJECTED`
+- `TERMINATED`
+- `ESCALATED`
+- `PENDING_REVIEW`
+- approval TTL expiry
+- human approval queue in the UI
+
+### 2. Rollback Path
+
+V1 does not attempt automatic recovery.
+It emphasizes clarity and observability.
+
+Implemented behavior includes:
+
+- `EXECUTION_FAILED -> FAILED`
+- failure summary
+- traceback capture
+- partial artifact capture
+- tool call log capture
+- resubmit path
+
+Non-goals still hold:
+
+- no auto-retry
+- no auto-revert
+- no compensation logic
+
+### 3. Dry-Run Mode
+
+Dry-run executes the full governed path without committing writes.
+
+Implemented behavior includes:
+
+- UI dry-run toggle
+- `mode = DRY_RUN` propagation
+- explicit declared writes
+- skipped write log
+- fail-safe default behavior for side effects
+
+### 4. Policy Feedback Loop
+
+Policy evolves through human review, not autonomous adaptation.
+
+Implemented behavior includes:
+
+- policy profile editing in the platform
+- required change reason
+- version history
+- previous/new state capture
+- author and timestamp capture
+- audit data available for review
+
+Current limitation:
+
+- platform policy edits are versioned and audited, but not yet automatically written back into connected repo artifacts
+
+## AOS/CDD Framework Layer
+
+The original repository-native framework remains a major part of the system.
+
+Core artifacts include:
+
+- `Vision`
+- `Constraints`
+- `Work Package`
+- `Session Loader`
+- `Vault Health`
+- `CCR`
+- `Completion Evidence`
+
+Key directories:
+
+- [spec/](./spec/)
+- [_templates/](./_templates/)
+- [machine/](./machine/)
+- [tools/](./tools/)
+- [quickstart/](./quickstart/)
+- [examples/](./examples/)
+
+## What The System Can Do Now
+
+The current open-source reference system can:
+
+- interpret a software-delivery request
+- classify it into a governed case
+- apply policy and approval context
+- return `clarify`, `refuse`, `dispatch`, or `escalate`
+- route approved work into governed AOS/CDD procedures
+- pause dispatch at HITL
+- run dry-run execution
+- capture structured failure traces
+- persist runs and request history
+- report ops/audit summaries
+- enforce policy-aware CI checks
+
+Supported case families include:
+
+- `new_project.initial_definition`
+- `implementation.create_first_wp`
+- `implementation.run_wp`
+- `implementation.review_wp`
+- `implementation.create_followup_wp`
+- `change.constraint_conflict`
+- `docs.update_constraints`
+- `ops.run_validation`
+- `security.protected_resource_change`
+
+## Repository Structure
+
+- `spec/`: framework specification
+- `_templates/`: reusable AOS/CDD templates
+- `machine/`: machine-readable schemas
+- `tools/`: validation and framework tooling
+- `examples/`: worked example projects and governed artifacts
+- `agent_control_stack/`: interpretation, policy, execution, eval, reporting runtime
+- `platform/`: reference hosted product layer
+- `tests/`: runtime, platform, service, scenario, and regression tests
+- `docs/`: architecture, API, deployment, compatibility, release guidance
+
+## How It Works End To End
+
+Typical flow:
+
+1. A user creates or opens a project.
+2. The user connects a repo and project context.
+3. The user submits a governed request.
+4. Layer 3 classifies the request and applies policy.
+5. If dispatchable, the request pauses in HITL.
+6. A human approves, rejects, or escalates it.
+7. If approved, Layer 4 prepares the governed execution bounds.
+8. Layer 5 executes only within those bounds.
+9. Layer 6 records the full outcome and returns it to the UI.
+
+## Open Source Boundary
+
+This repository is intentionally open source as an end-to-end reference implementation.
+
+That includes:
+
+- the framework
+- the runtime
+- the reference platform
+- the tests
+- the docs
+
+The intended commercial boundary, if you build a hosted business around it, is not the architecture itself.
+It is the operated service around it:
+
+- production infrastructure
+- managed auth integrations
+- multi-tenant operations
+- hosted reliability
+- billing and support
+
+## Getting Started
+
+### Core runtime
+
+Install from the repo root:
+
+```powershell
+python -m pip install -e .
+```
+
+Try a governed request:
+
+```powershell
+python -m agent_control_stack.cli --text "Run WP-001 now" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute --persist
+```
+
+### Platform API
+
+```powershell
+python -m uvicorn platform.api.app.main:app --reload
+```
+
+### Platform web app
+
+```powershell
+cd platform\web
+npm install
+npm run dev
+```
+
+## Validation
+
+Framework validation:
 
 ```powershell
 python tools\aos_validate.py validate
 python tools\aos_validate.py health-report
 ```
 
-The validator checks machine-readable artifacts against the repository schemas and emits a `reports/vault-health-report.json` file.
-
-## Agent Control Stack
-
-This repository now also contains a production-oriented example implementation of a governed interpretation and dispatch layer under `agent_control_stack/`.
-
-It is paired with the AOS/CDD example project in [examples/agent-control-stack](./examples/agent-control-stack/README.md) and demonstrates a narrow end-to-end flow:
-
-- restore
-- balance
-- classify
-- dispatch
-- governed AOS/CDD handoff
-
-Example:
+Tests:
 
 ```powershell
-python -m agent_control_stack.cli --text "Run WP-001 now" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute --persist
+python -m unittest discover -s tests -p "test_*.py"
 ```
 
-That command produces:
-
-- a structured decision envelope
-- a governed execution result
-- persisted run artifacts under `runs/`
-
-The repository also includes:
-
-- unit tests
-- HTTP service tests
-- scenario-level end-to-end tests under `tests/scenarios/`
-- an eval runner via `python -m agent_control_stack.eval`
-- a policy-aware CI gate via `python -m agent_control_stack.policy_gate`
-- a persisted-run report via `python -m agent_control_stack.ops_report`
-- a run-retention maintenance command via `python -m agent_control_stack.run_maintenance`
-
-The current production-hardening path now also includes a governed policy artifact:
-
-- `examples/agent-control-stack/ops/policy-profile.yaml`
-- `examples/agent-control-stack/ops/security-threat-model.md`
-- `examples/agent-control-stack/ops/APR-001-security-validation.yaml`
-
-CI now emits machine-readable operational artifacts under `reports/` for:
-
-- vault health
-- scenario eval summary
-- policy gate result
-- persisted run report
-
-The package also exposes a minimal HTTP API:
+Eval:
 
 ```powershell
-python -m agent_control_stack.service --port 8000
+python -m agent_control_stack.eval
+python -m agent_control_stack.policy_gate --eval-report reports\agent-control-eval.json
 ```
 
-Primary endpoints:
-
-- `POST /interpret`
-- `POST /execute`
-- `GET /runs/{id}`
-
-Full API details: [docs/api.md](./docs/api.md)
-
-Quickstart for the current runtime: [QUICKSTART.md](./QUICKSTART.md)
-
-Architecture overview: [docs/architecture.md](./docs/architecture.md)
-
-Compatibility policy: [docs/compatibility.md](./docs/compatibility.md)
-
-Deployment guide: [docs/deployment.md](./docs/deployment.md)
-
-Release checklist: [docs/release-checklist.md](./docs/release-checklist.md)
-
-## Try It Quickly
-
-Install from the repository root:
+Ops report:
 
 ```powershell
-python -m pip install -e .
+python -m agent_control_stack.ops_report --store-dir runs
 ```
 
-Run the main governed example:
+## Current Verification State
 
-```powershell
-python -m agent_control_stack.cli --text "Run WP-001 now" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute --persist
-```
+At the current reviewed state:
 
-That will:
+- Python test suite passes
+- scenario eval passes
+- policy gate passes
+- Next.js production build passes
+- machine-readable artifact validation passes
 
-- interpret the request
-- apply policy and registered-case checks
-- dispatch into a governed AOS/CDD procedure
-- persist run artifacts under `runs/`
+## Documentation
 
-## Worked Example
-
-The example project under [examples/saas-api](./examples/saas-api/) demonstrates:
-
-- product vision
-- schema and API constraints
-- five work packages
-- session loader and completion report
-- breaking constraint change propagation
-- failure-path artifacts such as blocker reports and blocked sessions
+- Quickstart: [QUICKSTART.md](./QUICKSTART.md)
+- API: [docs/api.md](./docs/api.md)
+- Architecture: [docs/architecture.md](./docs/architecture.md)
+- Compatibility: [docs/compatibility.md](./docs/compatibility.md)
+- Deployment: [docs/deployment.md](./docs/deployment.md)
+- Release checklist: [docs/release-checklist.md](./docs/release-checklist.md)
+- Platform workspace: [platform/README.md](./platform/README.md)
 
 ## Versioning
 
-The current framework version is `2.0.0`.
+The repository currently identifies the framework as `2.0.0`.
 
-Machine-readable artifacts include `spec_version`.
+Compatibility rules are documented in:
 
-Compatibility policy:
-
-- patch releases may add clarifications and non-breaking tooling improvements
-- minor releases may add optional fields
-- changes that make optional machine-readable fields required must increment the minor version and include migration guidance
-
-See [docs/compatibility.md](./docs/compatibility.md) for the fuller contract.
-
-## Who Should Use This
-
-Use AOS/CDD v2 if:
-
-- you use AI repeatedly on the same codebase
-- you need continuity across sessions or tools
-- you care about architectural consistency
-- you need auditable implementation boundaries
-
-Do not start with the full framework if:
-
-- the project is a disposable prototype
-- the team has no CI or review discipline
-- no one owns schema, API, or security decisions
-
-Read [spec/15-boundaries.md](./spec/15-boundaries.md) before broad adoption.
-
-## Open Source Project Status
-
-This repository is ready for public evaluation and pilot use. It includes:
-
-- full framework spec
-- reusable templates
-- validator-backed machine-readable artifacts
-- reference CI workflow
-- worked example
-- Tier 1 quickstart path
-- governed interpretation and dispatch runtime
-- policy-aware CI gate
-- scenario eval and ops reporting surfaces
-
-It is suitable for evaluation, pilot adoption, extension, and use as the starting point for a governed AI-development workflow.
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
+- [docs/compatibility.md](./docs/compatibility.md)
 
 ## License
 

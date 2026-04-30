@@ -11,3 +11,10 @@ runs/
 runtime-output/
 tests/_output/
 reports/*.json
+node_modules/
+.next/
+platform/api/.venv/
+platform/web/.env*
+platform/api/.env*
+platform/api/data/*.db
+platform/api/data/*.db-journal

@@ -95,10 +95,28 @@ Before upgrading:
    - eval
    - policy gate
 
+## Platform API Extension
+
+The hosted `platform/api` layer now supports:
+
+- PostgreSQL-backed persistence through `AOS_CDD_PLATFORM_DATABASE_URL`
+- external trusted-header auth mode through:
+  - `AOS_CDD_PLATFORM_AUTH_MODE=external`
+  - `AOS_CDD_PLATFORM_AUTH_PROVIDER`
+  - `AOS_CDD_PLATFORM_AUTH_LOGIN_PATH`
+  - `AOS_CDD_PLATFORM_AUTH_USER_*_HEADER`
+
+Recommended deployment pattern:
+
+1. put the platform API behind a reverse proxy or gateway
+2. terminate TLS there
+3. let the gateway inject trusted user headers
+4. run the API against PostgreSQL for durable state
+5. run the Next.js frontend against that API with matching auth mode
+
 ## Current Limits
 
-- no built-in authentication layer
-- no database-backed run store
+- external auth assumes a trusted fronting gateway; it is not a full identity provider by itself
 - no distributed locking model
 - no formal HA story
 
