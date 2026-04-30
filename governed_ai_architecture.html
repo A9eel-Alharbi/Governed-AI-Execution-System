@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Governed AI Execution System — Full Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161e;
+    --bg3: #1a1e28;
+    --border: #252a38;
+    --text: #c8cdd8;
+    --text-dim: #6b7280;
+    --text-bright: #eef0f5;
+    --purple: #7c6ff7;
+    --purple-dim: #3d3878;
+    --teal: #2db896;
+    --teal-dim: #164f40;
+    --amber: #e09a3a;
+    --amber-dim: #5a3c14;
+    --coral: #e0614a;
+    --coral-dim: #5a2318;
+    --blue: #4a9ef5;
+    --blue-dim: #1a3d6b;
+    --green: #5bb85d;
+    --green-dim: #1e3f1f;
+    --gray: #7a8094;
+    --gray-dim: #252a38;
+    --red: #e05555;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 60px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Cover */
+  .cover {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 48px;
+    margin-bottom: 56px;
+  }
+  .cover-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--purple);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .cover h1 {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .cover-sub {
+    font-size: 15px;
+    color: var(--text-dim);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+  .cover-meta {
+    margin-top: 32px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meta-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .meta-value {
+    font-size: 13px;
+    color: var(--text-bright);
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  .section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section p {
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  /* Philosophy callout */
+  .philosophy {
+    background: var(--bg2);
+    border: 1px solid var(--purple-dim);
+    border-left: 3px solid var(--purple);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .philosophy p {
+    font-size: 15px;
+    color: var(--text-bright);
+    margin: 0;
+    font-style: italic;
+  }
+  .philosophy .attr {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    font-style: normal;
+  }
+
+  /* Architecture diagram */
+  .diagram-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+
+  .arch-layer {
+    border-radius: 6px;
+    padding: 12px 20px;
+    margin-bottom: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .arch-layer .layer-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+  .arch-layer .layer-sub {
+    font-size: 11px;
+    opacity: 0.75;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .l-purple { background: var(--purple-dim); border-left: 3px solid var(--purple); }
+  .l-teal   { background: var(--teal-dim);   border-left: 3px solid var(--teal); }
+  .l-amber  { background: var(--amber-dim);  border-left: 3px solid var(--amber); }
+  .l-coral  { background: var(--coral-dim);  border-left: 3px solid var(--coral); }
+  .l-blue   { background: var(--blue-dim);   border-left: 3px solid var(--blue); }
+  .l-green  { background: var(--green-dim);  border-left: 3px solid var(--green); }
+  .l-gray   { background: var(--gray-dim);   border-left: 3px solid var(--gray); }
+
+  .arch-arrow {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1.2;
+    margin: 4px 0;
+  }
+  .arch-arrow-split {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0;
+  }
+  .arch-arrow-split .main { flex: 1; text-align: center; color: var(--text-dim); font-size: 16px; }
+  .arch-arrow-split .side {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+  .side-red { color: var(--red) !important; border-color: var(--red) !important; }
+
+  .arch-repo {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 20px;
+    text-align: center;
+    margin: 2px 80px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-bright);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .feedback-note {
+    margin-top: 16px;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .feedback-note span { display: flex; align-items: center; gap: 6px; }
+
+  /* Layer detail cards */
+  .layer-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .layer-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .layer-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .badge-purple { background: var(--purple-dim); color: var(--purple); }
+  .badge-teal   { background: var(--teal-dim);   color: var(--teal); }
+  .badge-amber  { background: var(--amber-dim);  color: var(--amber); }
+  .badge-coral  { background: var(--coral-dim);  color: var(--coral); }
+  .badge-blue   { background: var(--blue-dim);   color: var(--blue); }
+  .badge-green  { background: var(--green-dim);  color: var(--green); }
+  .badge-gray   { background: var(--gray-dim);   color: var(--gray); }
+
+  .layer-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+  .layer-card .desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 12px;
+  }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-dim);
+  }
+  .principle-box {
+    background: var(--bg3);
+    border-left: 2px solid var(--border);
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Gap specs */
+  .gap-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .gap-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .gap-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--purple);
+    min-width: 28px;
+  }
+  .gap-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 2px;
+  }
+  .gap-header .gap-def {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .gap-section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    margin-top: 18px;
+  }
+
+  .state-flow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    background: var(--bg3);
+    padding: 14px 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    line-height: 1.9;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 12px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  td:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-bright);
+    white-space: nowrap;
+  }
+
+  .nongoal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .nongoal {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .nongoal::before {
+    content: '✗';
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .key-principle {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .key-principle strong {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--purple);
+    margin-bottom: 4px;
+  }
+
+  /* V1 lock section */
+  .lock-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .lock-box h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+  .lock-flow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    background: var(--bg3);
+    padding: 14px 18px;
+    border-radius: 4px;
+    line-height: 1.9;
+    white-space: pre;
+  }
+
+  /* Summary table */
+  .summary-table th { color: var(--purple); }
+  .summary-table td:first-child { color: var(--text-bright); font-weight: 500; }
+
+  /* Footer */
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-left {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .footer-right {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--teal);
+  }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<div class="cover">
+  <div class="cover-tag">Architecture Specification · V1</div>
+  <h1>Governed AI<br>Execution System</h1>
+  <p class="cover-sub">A six-layer architecture where the LLM is not the controller — it is the bounded executor inside a governed system. Every request passes through classification, policy, and human approval before any model acts.</p>
+  <div class="cover-meta">
+    <div class="meta-item">
+      <span class="meta-label">Version</span>
+      <span class="meta-value">1.0 — Test Phase</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Status</span>
+      <span class="meta-value">Architecture Complete</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Layers</span>
+      <span class="meta-value">6 Layers + 4 Gap Components</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Core Constraint</span>
+      <span class="meta-value">One active request at a time (v1 lock)</span>
+    </div>
+  </div>
+</div>
+
+<!-- Core Philosophy -->
+<div class="section">
+  <div class="section-tag">01 · Philosophy</div>
+  <h2>Core Principle</h2>
+  <p>Most AI products treat the LLM as the orchestrator and bolt governance on as an afterthought. This system inverts that. Governance is the product. The LLM is the last mile.</p>
+  <div class="philosophy">
+    <p>"The LLM is not the controller. The LLM is the bounded executor inside a governed system."</p>
+    <div class="attr">— Core architectural principle</div>
+  </div>
+  <p>Every request travels through six layers before any model acts. Classification happens before execution. Policy is applied before dispatch. A human approves before anything changes. The audit record exists before the result is returned.</p>
+  <p>This matters most in regulated industries — finance, healthcare, legal, defense — where that distinction between "AI that decides" and "AI that executes under control" is the difference between adoption and rejection.</p>
+</div>
+
+<!-- Architecture Diagram -->
+<div class="section">
+  <div class="section-tag">02 · Architecture</div>
+  <h2>Full System Diagram</h2>
+
+  <div class="diagram-wrap">
+
+    <div class="arch-layer l-purple">
+      <span class="layer-title">Layer 1 — Product UI</span>
+      <span class="layer-sub">Create project · connect repo · submit requests · review results</span>
+    </div>
+
+    <div class="arch-arrow">↓</div>
+
+    <div class="arch-layer l-teal">
+      <span class="layer-title">Layer 2 — Platform / Project State</span>
+      <span class="layer-sub">Auth · users · repos · tokens · UI↔repo sync</span>
+    </div>
+
+    <div class="arch-arrow">↓</div>
+
+    <div class="arch-layer l-amber">
+      <span class="layer-title">Layer 3 — Interpretation / Control</span>
+      <span class="layer-sub">Classify · apply policy · decide: clarify / refuse / dispatch / escalate</span>
+    </div>
+
+    <div class="arch-arrow">↓</div>
+
+    <div class="arch-layer l-coral" style="margin: 0 60px 2px;">
+      <span class="layer-title">Human Approval Gate (HITL)</span>
+      <span class="layer-sub">Approve · reject · escalate — human decision, not model decision</span>
+    </div>
+
+    <div class="arch-arrow-split">
+      <div class="main">↓</div>
+      <div class="side">→ Reject / escalate</div>
+    </div>
+
+    <div class="arch-layer l-blue">
+      <span class="layer-title">Layer 4 — Governed Execution (AOS / CDD)</span>
+      <span class="layer-sub">Load WP · constraints · session · vault · change-control routing</span>
+    </div>
+
+    <div class="arch-arrow-split">
+      <div class="main">↓</div>
+      <div class="side">→ Dry-run mode</div>
+    </div>
+
+    <div class="arch-layer l-green">
+      <span class="layer-title">Layer 5 — Agent / Tool Execution</span>
+      <span class="layer-sub">LLM implements · drafts · validates · produces completion evidence</span>
+    </div>
+
+    <div class="arch-arrow-split">
+      <div class="main">↓</div>
+      <div class="side side-red">→ Rollback path on failure</div>
+    </div>
+
+    <div class="arch-repo">Repo — source of truth</div>
+
+    <div class="arch-arrow">↓</div>
+
+    <div class="arch-layer l-gray">
+      <span class="layer-title">Layer 6 — Audit / Ops</span>
+      <span class="layer-sub">Request · decision · traces · policy context · retention · CI validation</span>
+    </div>
+
+    <div class="feedback-note">
+      <span>↖ Policy feedback loop (Layer 6 → Layer 3)</span>
+      <span>↗ Results returned to UI (Layer 6 → Layer 1)</span>
+      <span>→ Webhooks / alert side-channel</span>
+    </div>
+  </div>
+
+  <p>The flow is linear by design. There are no shortcuts between layers. A request cannot jump from the UI directly to execution. Every layer must pass the request forward explicitly.</p>
+</div>
+
+<!-- Layer Details -->
+<div class="section">
+  <div class="section-tag">03 · Layer Details</div>
+  <h2>Layer Specifications</h2>
+
+  <div class="layer-card">
+    <div class="layer-card-header">
+      <span class="layer-badge badge-purple">Layer 1</span>
+      <h3>Product UI</h3>
+    </div>
+    <div class="desc">The only surface the user directly touches. Everything else is invisible from here.</div>
+    <div class="tag-list">
+      <span class="tag">Create project</span>
+      <span class="tag">Connect repo</span>
+      <span class="tag">Define vision</span>
+      <span class="tag">Define schema</span>
+      <span class="tag">API contract</span>
+      <span class="tag">Security rules</span>
+      <span class="tag">Policy profile</span>
+      <span class="tag">Submit requests</span>
+      <span class="tag">Review approvals</span>
+      <span class="tag">Review WPs</span>
+      <span class="tag">Review reports</span>
+      <span class="tag">Review validations</span>
+    </div>
+    <div class="principle-box">This layer is just the user-facing surface. It does not execute, classify, or decide. It captures intent and displays results.</div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-card-header">
+      <span class="layer-badge badge-teal">Layer 2</span>
+      <h3>Platform / Project State</h3>
+    </div>
+    <div class="desc">The backend application. Keeps the product itself working.</div>
+    <div class="tag-list">
+      <span class="tag">Users</span>
+      <span class="tag">Projects</span>
+      <span class="tag">Repo connections</span>
+      <span class="tag">Stored UI forms</span>
+      <span class="tag">Auth</span>
+      <span class="tag">API tokens</span>
+      <span class="tag">Project metadata</span>
+      <span class="tag">UI↔repo sync</span>
+    </div>
+    <div class="principle-box">Manages state only. Does not classify requests. Does not execute anything. Passes validated requests to Layer 3.</div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-card-header">
+      <span class="layer-badge badge-amber">Layer 3</span>
+      <h3>Interpretation / Control</h3>
+    </div>
+    <div class="desc">agent_control_stack. The gatekeeper. No execution happens without passing through here.</div>
+    <div class="tag-list">
+      <span class="tag">Restore context</span>
+      <span class="tag">Balance / normalize</span>
+      <span class="tag">Classify</span>
+      <span class="tag">Apply policy</span>
+      <span class="tag">Apply approvals</span>
+    </div>
+    <p style="margin: 12px 0 8px; font-size: 12px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em;">Decision outcomes</p>
+    <table>
+      <tr><th>Decision</th><th>Meaning</th></tr>
+      <tr><td>clarify</td><td>Request is ambiguous — return to user for more information</td></tr>
+      <tr><td>refuse</td><td>Request violates policy — terminated immediately</td></tr>
+      <tr><td>dispatch</td><td>Request is approved — forward to HITL gate then Layer 4</td></tr>
+      <tr><td>escalate</td><td>Request exceeds current authority — routed to higher review</td></tr>
+    </table>
+    <div class="principle-box" style="margin-top: 14px;">The LLM moat lives here. This layer is the hardest to replicate and the most valuable to compliance-heavy buyers.</div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-card-header">
+      <span class="layer-badge badge-blue">Layer 4</span>
+      <h3>Governed Execution (AOS / CDD)</h3>
+    </div>
+    <div class="desc">Decides exactly how execution is bounded. Only reached after HITL approval.</div>
+    <div class="tag-list">
+      <span class="tag">Choose artifact path</span>
+      <span class="tag">Load constraints</span>
+      <span class="tag">Load WP</span>
+      <span class="tag">Load session</span>
+      <span class="tag">Check vault health</span>
+      <span class="tag">Change-control routing</span>
+      <span class="tag">Dry-run flag</span>
+    </div>
+    <div class="principle-box">This layer never executes. It only decides how execution will be bounded, then hands off to Layer 5.</div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-card-header">
+      <span class="layer-badge badge-green">Layer 5</span>
+      <h3>Agent / Tool Execution</h3>
+    </div>
+    <div class="desc">Only here does the LLM or tool actually act. The model is the last step, not the first.</div>
+    <div class="tag-list">
+      <span class="tag">Implement code</span>
+      <span class="tag">Draft artifacts</span>
+      <span class="tag">Review outputs</span>
+      <span class="tag">Run validation commands</span>
+      <span class="tag">Produce completion evidence</span>
+    </div>
+    <div class="principle-box">All prior layers have already allowed this. The model executes within bounds that were fully defined before it was invoked.</div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-card-header">
+      <span class="layer-badge badge-gray">Layer 6</span>
+      <h3>Audit / Ops</h3>
+    </div>
+    <div class="desc">Everything gets recorded. Provides visibility, control, and the data source for policy refinement.</div>
+    <div class="tag-list">
+      <span class="tag">Request</span>
+      <span class="tag">Decision</span>
+      <span class="tag">Traces</span>
+      <span class="tag">Policy context</span>
+      <span class="tag">Approvals</span>
+      <span class="tag">Execution results</span>
+      <span class="tag">Reports</span>
+      <span class="tag">Retention</span>
+      <span class="tag">CI validation</span>
+    </div>
+    <div class="principle-box">Audit is a first-class layer, not an afterthought. It feeds the policy feedback loop and surfaces results back to the UI.</div>
+  </div>
+</div>
+
+<!-- V1 Lock -->
+<div class="section">
+  <div class="section-tag">04 · V1 Constraint</div>
+  <h2>Single Request Lock</h2>
+  <p>For the test phase, concurrency is solved with a simple lock. One active request per project at a time. This eliminates queue management, priority lanes, and partial execution recovery as v1 concerns.</p>
+
+  <div class="lock-box">
+    <h4>Lock mechanism</h4>
+    <div class="lock-flow">is_processing: false   ← project is available
+
+Submit request
+      ↓
+is_processing → true   ← UI disables submit button
+      ↓
+Request travels through all 6 layers
+      ↓
+Execution completes (success or failure)
+      ↓
+is_processing → false  ← project is available again</div>
+  </div>
+
+  <p style="margin-top: 14px;">The only edge case to handle is a stuck lock. If <code>is_processing</code> remains <code>true</code> beyond a defined timeout, auto-release and mark the request as <code>FAILED</code>. A manual force-unlock button in the UI is sufficient for v1.</p>
+  <p>When ready to scale: replace the boolean lock with a job queue. The architecture does not change — only the concurrency mechanism does.</p>
+</div>
+
+<!-- 4 Gap Specs -->
+<div class="section">
+  <div class="section-tag">05 · Gap Components</div>
+  <h2>V1 Gap Specifications</h2>
+  <p>Four components complete the architecture. Each is defined below with behavior, state flow, and explicit non-goals. Non-goals are as binding as goals.</p>
+
+  <!-- Gap 1: HITL -->
+  <div class="gap-card">
+    <div class="gap-header">
+      <span class="gap-num">01</span>
+      <div>
+        <h3>HITL Gate — Human-in-the-Loop</h3>
+        <div class="gap-def">Controlled approval checkpoint between classification and execution</div>
+      </div>
+    </div>
+
+    <div class="gap-section-title">Trigger</div>
+    <p style="font-size: 12px; color: var(--text);">Every request Layer 3 classifies as <code>DISPATCH</code> enters this gate. Requests classified as <code>REFUSE</code> or <code>CLARIFY</code> never reach it.</p>
+
+    <div class="gap-section-title">State machine</div>
+    <div class="state-flow">SUBMITTED → CLASSIFIED → PENDING_APPROVAL → APPROVED → DISPATCHED
+                                         ↓
+                                       REJECTED → TERMINATED
+                                         ↓
+                                       ESCALATED → PENDING_REVIEW</div>
+
+    <div class="gap-section-title">Stored at PENDING_APPROVAL</div>
+    <table>
+      <tr><th>Field</th><th>Purpose</th></tr>
+      <tr><td>request_text</td><td>Original request exactly as submitted</td></tr>
+      <tr><td>policy_decision</td><td>Classification and risk level from Layer 3</td></tr>
+      <tr><td>intended_actions</td><td>What Layer 4 would execute if approved</td></tr>
+      <tr><td>project_context</td><td>Requesting user, project, timestamp</td></tr>
+      <tr><td>expires_at</td><td>Auto-expire TTL — prevents stuck pending states</td></tr>
+    </table>
+
+    <div class="gap-section-title">Human choices</div>
+    <table>
+      <tr><th>Choice</th><th>Outcome</th></tr>
+      <tr><td>Approve</td><td>Request dispatched to Layer 4</td></tr>
+      <tr><td>Reject</td><td>Request terminated, user notified with reason</td></tr>
+      <tr><td>Escalate</td><td>Moved to PENDING_REVIEW, assigned to higher authority</td></tr>
+    </table>
+
+    <div class="key-principle">
+      <strong>Key principle</strong>
+      This is a state machine + DB record + UI screen. It is not an AI problem. No model makes or influences this decision.
+    </div>
+
+    <div class="gap-section-title" style="margin-top: 18px;">Non-goals (v1)</div>
+    <div class="nongoal-list">
+      <div class="nongoal">No auto-approval based on risk score</div>
+      <div class="nongoal">No approval delegation or routing rules</div>
+      <div class="nongoal">No SLA enforcement or escalation timers</div>
+    </div>
+  </div>
+
+  <!-- Gap 2: Rollback -->
+  <div class="gap-card">
+    <div class="gap-header">
+      <span class="gap-num">02</span>
+      <div>
+        <h3>Rollback Path — Failure Handling</h3>
+        <div class="gap-def">Structured, observable failure response — not automatic recovery</div>
+      </div>
+    </div>
+
+    <div class="gap-section-title">Failure flow</div>
+    <div class="state-flow">EXECUTION_FAILED
+      ↓
+Capture error + full execution trace
+      ↓
+Set request status → FAILED
+      ↓
+Store all artifacts produced up to failure point
+      ↓
+Notify user via UI with plain-language summary
+      ↓
+Lock released → project available for next request</div>
+
+    <div class="gap-section-title">Stored on failure</div>
+    <table>
+      <tr><th>Data</th><th>Purpose</th></tr>
+      <tr><td>Error + stack trace</td><td>Debugging</td></tr>
+      <tr><td>Last successful step</td><td>Shows how far execution got</td></tr>
+      <tr><td>Partial artifacts</td><td>Everything produced before failure</td></tr>
+      <tr><td>Full tool call log</td><td>Exact sequence of Layer 5 actions</td></tr>
+      <tr><td>Policy + session state</td><td>Context at moment of failure</td></tr>
+    </table>
+
+    <div class="gap-section-title">What the UI shows</div>
+    <table>
+      <tr><th>Element</th><th>Description</th></tr>
+      <tr><td>Status badge</td><td>Request marked FAILED with timestamp</td></tr>
+      <tr><td>Error summary</td><td>Plain-language description of what went wrong</td></tr>
+      <tr><td>Trace link</td><td>Link to full execution trace for debugging</td></tr>
+      <tr><td>Re-submit option</td><td>Option to re-submit the same request unchanged</td></tr>
+    </table>
+
+    <div class="key-principle">
+      <strong>Key principle</strong>
+      Start with observability and clarity, not automatic recovery. A human reading a failure trace and deciding what to do next is the correct v1 behavior.
+    </div>
+
+    <div class="gap-section-title" style="margin-top: 18px;">Non-goals (v1)</div>
+    <div class="nongoal-list">
+      <div class="nongoal">No automatic repo revert</div>
+      <div class="nongoal">No artifact undo or rollback</div>
+      <div class="nongoal">No retry logic or auto-recovery</div>
+      <div class="nongoal">No compensation transactions</div>
+    </div>
+  </div>
+
+  <!-- Gap 3: Dry-Run -->
+  <div class="gap-card">
+    <div class="gap-header">
+      <span class="gap-num">03</span>
+      <div>
+        <h3>Dry-Run Mode</h3>
+        <div class="gap-def">Full logic execution without committing any side effects</div>
+      </div>
+    </div>
+
+    <div class="gap-section-title">How it is invoked</div>
+    <p style="font-size: 12px; color: var(--text);">User selects dry-run in the UI before submitting. Layer 4 receives the flag <code>mode = DRY_RUN</code> which propagates through the entire execution chain.</p>
+
+    <div class="gap-section-title">The contract — inverted by design</div>
+    <div class="state-flow">Tool receives request
+      ↓
+Execute full logic
+      ↓
+Generate outputs and completion evidence
+      ↓
+Check: mode == DRY_RUN?
+  YES → skip all write operations, log "would have written X"
+  NO  → execute writes normally</div>
+
+    <p style="font-size: 12px; color: var(--text); margin-top: 14px;">Tools are <strong style="color: var(--text-bright);">read-only by default.</strong> A tool must explicitly declare write capability to perform side effects. If a new tool is added and the developer forgets to handle the dry-run flag, the tool does nothing — it fails safely rather than causing unintended writes.</p>
+
+    <div class="gap-section-title">What dry-run produces</div>
+    <table>
+      <tr><th>Output</th><th>Description</th></tr>
+      <tr><td>Execution trace</td><td>Every step that would have run</td></tr>
+      <tr><td>Skipped writes log</td><td>List of writes that were bypassed</td></tr>
+      <tr><td>Draft artifacts</td><td>Outputs in draft state, not committed</td></tr>
+      <tr><td>Validation results</td><td>Checks that would have passed or failed</td></tr>
+      <tr><td>Summary</td><td>"X would have changed, Y would have been created"</td></tr>
+    </table>
+
+    <div class="key-principle">
+      <strong>Key principle</strong>
+      Dry-run is not a feature — it is a discipline enforced across the system. Every tool author declares write capability. The system enforces the contract.
+    </div>
+
+    <div class="gap-section-title" style="margin-top: 18px;">Non-goals (v1)</div>
+    <div class="nongoal-list">
+      <div class="nongoal">No partial dry-run — either the full request is dry or it is not</div>
+      <div class="nongoal">No comparison diff between dry-run and live execution</div>
+      <div class="nongoal">No automatic promotion from dry-run to live</div>
+    </div>
+  </div>
+
+  <!-- Gap 4: Policy Feedback -->
+  <div class="gap-card">
+    <div class="gap-header">
+      <span class="gap-num">04</span>
+      <div>
+        <h3>Policy Feedback Loop</h3>
+        <div class="gap-def">Human-driven policy refinement based on real execution data</div>
+      </div>
+    </div>
+
+    <div class="gap-section-title">Data surfaced by Layer 6</div>
+    <table>
+      <tr><th>Data</th><th>Purpose</th></tr>
+      <tr><td>Execution results</td><td>See what succeeded and what failed</td></tr>
+      <tr><td>Policy violations</td><td>See which rules triggered and how often</td></tr>
+      <tr><td>HITL decisions</td><td>See what humans approved, rejected, escalated</td></tr>
+      <tr><td>Decision traces</td><td>See exactly why Layer 3 classified each request</td></tr>
+      <tr><td>Failure traces</td><td>See where execution broke down</td></tr>
+    </table>
+
+    <div class="gap-section-title">The feedback cycle</div>
+    <div class="state-flow">Execution happens
+      ↓
+Layer 6 records everything
+      ↓
+Human reviews dashboard
+      ↓
+Human identifies gaps: wrong classification / over-blocking / under-blocking
+      ↓
+Human manually updates policy profiles in UI
+      ↓
+Policy version saved: author + timestamp + reason (required)
+      ↓
+Policy committed to repo as artifact (same change-control as code)
+      ↓
+New policy applies to all subsequent requests</div>
+
+    <div class="gap-section-title">Policy versioning</div>
+    <p style="font-size: 12px; color: var(--text); margin-bottom: 10px;">Every policy change is stored as a versioned record. Policy profiles are also committed to the repo as artifacts, meaning they go through the same change-control as code.</p>
+    <table>
+      <tr><th>Field</th><th>Description</th></tr>
+      <tr><td>previous_state</td><td>Full snapshot of policy before the change</td></tr>
+      <tr><td>new_state</td><td>Full snapshot of policy after the change</td></tr>
+      <tr><td>changed_by</td><td>User who made the change</td></tr>
+      <tr><td>changed_at</td><td>Timestamp of the change</td></tr>
+      <tr><td>reason</td><td>Free text explanation — required, cannot be left blank</td></tr>
+    </table>
+
+    <div class="key-principle">
+      <strong>Key principle</strong>
+      Policy evolves through human judgment, not autonomous adaptation. The dashboard is a tool for informed human decision-making, not a suggestion engine.
+    </div>
+
+    <div class="gap-section-title" style="margin-top: 18px;">Non-goals (v1)</div>
+    <div class="nongoal-list">
+      <div class="nongoal">No automatic policy mutation based on patterns</div>
+      <div class="nongoal">No self-learning or model-driven policy updates</div>
+      <div class="nongoal">No A/B testing of policy variants</div>
+      <div class="nongoal">No policy recommendations from the system</div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="section">
+  <div class="section-tag">06 · Summary</div>
+  <h2>Architecture Summary</h2>
+
+  <table class="summary-table">
+    <tr>
+      <th>Component</th>
+      <th>Core mechanism</th>
+      <th>Key constraint</th>
+    </tr>
+    <tr>
+      <td>Layer 1 — Product UI</td>
+      <td>Forms, project creation, request submission</td>
+      <td>Captures intent only. Does not execute.</td>
+    </tr>
+    <tr>
+      <td>Layer 2 — Platform</td>
+      <td>Backend state management</td>
+      <td>Manages state only. Does not classify.</td>
+    </tr>
+    <tr>
+      <td>Layer 3 — Control</td>
+      <td>Classify → policy → decide</td>
+      <td>The gatekeeper. Nothing bypasses this.</td>
+    </tr>
+    <tr>
+      <td>HITL Gate</td>
+      <td>State machine + DB + UI</td>
+      <td>No model influences approval.</td>
+    </tr>
+    <tr>
+      <td>Layer 4 — Governed Exec</td>
+      <td>Load WP, constraints, session, vault</td>
+      <td>Decides bounds. Does not execute.</td>
+    </tr>
+    <tr>
+      <td>Layer 5 — Agent Exec</td>
+      <td>LLM executes within defined bounds</td>
+      <td>Last step, not first.</td>
+    </tr>
+    <tr>
+      <td>Layer 6 — Audit</td>
+      <td>Record everything</td>
+      <td>First-class layer, not an afterthought.</td>
+    </tr>
+    <tr>
+      <td>Rollback Path</td>
+      <td>Capture, log, notify, unlock</td>
+      <td>No auto-recovery in v1.</td>
+    </tr>
+    <tr>
+      <td>Dry-Run Mode</td>
+      <td>Inverted write contract</td>
+      <td>Tools are read-only by default.</td>
+    </tr>
+    <tr>
+      <td>Policy Feedback Loop</td>
+      <td>Human reviews audit, edits manually</td>
+      <td>No autonomous policy mutation.</td>
+    </tr>
+    <tr>
+      <td>V1 Request Lock</td>
+      <td>is_processing boolean + timeout</td>
+      <td>One active request at a time.</td>
+    </tr>
+  </table>
+
+  <div class="philosophy" style="margin-top: 28px;">
+    <p>"Human judgment is the control surface. The system provides data and structure. The human decides."</p>
+    <div class="attr">— Common thread across all four gap components</div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-left">Governed AI Execution System · V1 Architecture Specification</div>
+  <div class="footer-right">Test phase — single request lock active</div>
+</div>
+
+</body>
+</html>
