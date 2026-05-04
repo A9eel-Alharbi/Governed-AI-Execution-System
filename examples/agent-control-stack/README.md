@@ -51,7 +51,7 @@ Example request:
 {
   "text": "Run WP-001 now",
   "context": {
-    "repository_root": "D:/Projects/mygithub/v2/aos-cdd-v2",
+    "repository_root": "/home/dmin/viktor-devin/workspace/governed-ai-quickstart/repo",
     "session_loader": "examples/agent-control-stack/sessions/session-WP-001.yaml",
     "policy_artifact": "examples/agent-control-stack/ops/policy-profile.yaml"
   },
