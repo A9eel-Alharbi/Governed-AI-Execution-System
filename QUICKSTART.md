@@ -25,7 +25,20 @@ The alpha flow is:
 
 From the repository root:
 
-```powershell
+
+
+From the repository root:
+
+
+
+From the repository root:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install PyYAML pydantic fastapi httpx
+pip install -e .
+```
 python -m pip install -e .
 ```
 
@@ -34,7 +47,7 @@ python -m pip install -e .
 Dispatch a governed work-package execution:
 
 ```powershell
-python -m agent_control_stack.cli --text "Run WP-001 now" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute --persist
+python3 -m agent_control_stack.cli --text "Run WP-001 now" --context examples/agent-control-stack/runtime/run-wp-context.yaml --execute --persist
 ```
 
 What you should see:
@@ -44,6 +57,22 @@ What you should see:
 - a `persistence` record written under `runs/`
 
 ## Run The HTTP API
+
+Start the service:
+
+
+
+Then send a request:
+
+
+
+Start the service:
+
+
+
+Then send a request:
+
+
 
 Start the service:
 
@@ -58,7 +87,7 @@ Then send a request:
 {
   "text": "Run WP-001 now",
   "context": {
-    "repository_root": "D:/Projects/mygithub/v2/aos-cdd-v2",
+    "repository_root": "/home/dmin/viktor-devin/workspace/governed-ai-quickstart/repo",
     "session_loader": "examples/agent-control-stack/sessions/session-WP-001.yaml",
     "policy_artifact": "examples/agent-control-stack/ops/policy-profile.yaml",
     "policy": {
@@ -76,31 +105,31 @@ Then send a request:
 ### 1. New project onboarding
 
 ```powershell
-python -m agent_control_stack.cli --text "Start a new project in this repo" --execute
+python3 -m agent_control_stack.cli --text "Start a new project in this repo" --execute
 ```
 
 ### 2. Create the first work package
 
 ```powershell
-python -m agent_control_stack.cli --text "Create work package for the first implementation task" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute
+python3 -m agent_control_stack.cli --text "Create work package for the first implementation task" --context examples/agent-control-stack/runtime/run-wp-context.yaml --execute
 ```
 
 ### 3. Run a governed work package
 
 ```powershell
-python -m agent_control_stack.cli --text "Run WP-001 now" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute
+python3 -m agent_control_stack.cli --text "Run WP-001 now" --context examples/agent-control-stack/runtime/run-wp-context.yaml --execute
 ```
 
 ### 4. Open a constraint change request
 
 ```powershell
-python -m agent_control_stack.cli --text "Open a CCR for a constraint conflict" --context examples\agent-control-stack\runtime\run-wp-context.yaml --execute
+python3 -m agent_control_stack.cli --text "Open a CCR for a constraint conflict" --context examples/agent-control-stack/runtime/run-wp-context.yaml --execute
 ```
 
 ## Validate The AOS/CDD Artifacts
 
 ```powershell
-python tools\aos_validate.py validate
+python tools/aos_validate.py validate
 ```
 
 ## Run The Tests
